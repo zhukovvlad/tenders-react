@@ -23,6 +23,17 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Дополнительные правила для улучшения качества кода
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
+      }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
     },
   },
 )
