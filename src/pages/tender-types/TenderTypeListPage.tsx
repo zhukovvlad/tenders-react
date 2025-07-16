@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle, PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import { TenderTypeActions } from "@/components/actions/TenderTypeActions";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
@@ -42,6 +43,11 @@ export default function TenderTypeListPage() {
           `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`
         ); // Загрузим до 100 типов
         if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Ресурс не найден");
+          } else if (response.status >= 500) {
+            throw new Error("Ошибка сервера. Попробуйте позже");
+          }
           throw new Error(`Ошибка сети: ${response.status}`);
         }
         const data: TenderType[] = await response.json();
@@ -61,7 +67,7 @@ export default function TenderTypeListPage() {
   // --- НОВЫЙ ОБРАБОТЧИК ДЛЯ СОХРАНЕНИЯ ---
   const handleSave = async () => {
     if (!newTypeName.trim()) {
-      alert("Название типа не может быть пустым.");
+      toast.error("Название типа не может быть пустым.");
       return;
     }
     setIsSubmitting(true);
@@ -116,7 +122,7 @@ export default function TenderTypeListPage() {
         prev.map((t) => (t.id === id ? updatedType : t))
       );
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Произошла ошибка");
+      toast.error(e instanceof Error ? e.message : "Произошла ошибка");
     }
   };
 
@@ -133,7 +139,7 @@ export default function TenderTypeListPage() {
       // Удаляем из состояния на клиенте
       setTenderTypes((prev) => prev.filter((t) => t.id !== id));
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Произошла ошибка");
+      toast.error(e instanceof Error ? e.message : "Произошла ошибка");
     }
   };
 

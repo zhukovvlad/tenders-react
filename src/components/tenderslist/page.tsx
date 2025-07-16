@@ -9,7 +9,6 @@ import { DataTable } from "./data-table";
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
   // Для примера оставим заглушку
-  console.log("Fetching data...");
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
@@ -20,6 +19,12 @@ async function getData(): Promise<Payment[]> {
           email: "m@example.com",
         },
         {
+          id: "728sds52f",
+          amount: 2340,
+          status: "processing",
+          email: "m@example.com",
+        },
+		{
           id: "728sds52f",
           amount: 2340,
           status: "processing",
