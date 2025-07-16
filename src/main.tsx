@@ -14,6 +14,7 @@ import { TenderDetailPage } from "./pages/TenderDetailPage.tsx";
 import DemoPage from "./components/tenderslist/page.tsx";
 import { TenderChaptersPage } from "./pages/tender-types/TenderChaptersPage.tsx";
 import { TenderCategoriesPage } from "./pages/tender-types/TenderCategoriesPage.tsx";
+import UploadTenderPage from "./pages/UploadTenderPage.tsx";
 
 // Создаем роутер
 const router = createBrowserRouter([
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "tenders",
         element: <TenderPage />,
+      },
+      {
+        path: "tender-upload",
+        element: <UploadTenderPage />,
       },
       {
         path: "tenders/:id",

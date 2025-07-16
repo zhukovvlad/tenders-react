@@ -1,4 +1,4 @@
-import { AlignJustify, Home, ListChecks, Projector, Settings } from "lucide-react";
+import { AlignJustify, FileUp, Home, ListChecks, Projector, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -41,6 +41,11 @@ const tender_items = [
     title: "Тендеры",
     url: "tenders",
     icon: ListChecks,
+  },
+  {
+    title: "Загрузка тендера",
+    url: "tender-upload",
+    icon: FileUp,
   },
   {
     title: "Test",
