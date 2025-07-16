@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Award, Calendar, MoreVertical, Pencil, Percent, Trash2 } from "lucide-react";
+import { UI_TEXT } from "@/constants/messages";
 
 // Интерфейс для данных одного предложения
 export interface Proposal {
@@ -27,7 +28,7 @@ interface ProposalCardProps {
 
 // Вспомогательные функции
 const formatCurrency = (value: number | null) => {
-  if (value == null) return "N/A";
+  if (value == null) return UI_TEXT.NOT_AVAILABLE;
   return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 2 }).format(value);
 };
 
@@ -39,11 +40,11 @@ const findValueByKeyPrefix = (data: Record<string, string | null> | null, prefix
 };
 
 const displayNullableValue = (value: string | null, suffix = "") => {
-  if (value == null || value === "") return "N/A";
+  if (value == null || value === "") return UI_TEXT.NOT_AVAILABLE;
   return `${value}${suffix}`;
 };
 
-export function ProposalCard({ proposal, onUpdate, onDelete }: ProposalCardProps) {
+export function ProposalCard({ proposal }: ProposalCardProps) {
   const advancePayment = findValueByKeyPrefix(proposal.additional_info, 'Аванс');
   const completionTime = findValueByKeyPrefix(proposal.additional_info, 'Срок выполнения');
 
@@ -67,11 +68,11 @@ export function ProposalCard({ proposal, onUpdate, onDelete }: ProposalCardProps
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Действия</DropdownMenuLabel>
-            <DropdownMenuItem className="cursor-pointer" onClick={() => alert('Редактирование в разработке')}>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => alert(`${UI_TEXT.DEVELOPMENT}: Редактирование`)}>
               <Pencil className="mr-2 h-4 w-4" /> Редактировать
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={() => alert('Удаление в разработке')}>
+            <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={() => alert(`${UI_TEXT.DEVELOPMENT}: Удаление`)}>
               <Trash2 className="mr-2 h-4 w-4" /> Удалить
             </DropdownMenuItem>
           </DropdownMenuContent>

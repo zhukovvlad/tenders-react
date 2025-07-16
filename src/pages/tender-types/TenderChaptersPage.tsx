@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusCircle, LoaderCircle } from "lucide-react";
+import { buildApiUrl, API_CONFIG } from "@/config/api";
 import { TenderChapterActions } from "@/components/actions/TenderChapterActions";
 
 // --- Определяем типы данных ---
@@ -160,7 +161,7 @@ export function TenderChaptersPage() {
     // Не включаем здесь setLoading(true), чтобы таблица не "моргала" при обновлении
     try {
       const response = await fetch(
-        "http://localhost:8080/api/v1/tender-chapters?page_size=100"
+        `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?page_size=100`
       );
       if (!response.ok) throw new Error(`Ошибка сети при загрузке разделов`);
       const data: TenderChapter[] = await response.json();
@@ -178,8 +179,8 @@ export function TenderChaptersPage() {
       setError(null);
       try {
         const [chaptersResponse, typesResponse] = await Promise.all([
-          fetch("http://localhost:8080/api/v1/tender-chapters?page_size=100"),
-          fetch("http://localhost:8080/api/v1/tender-types?page_size=100"),
+          fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?page_size=100`),
+          fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`),
         ]);
         if (!chaptersResponse.ok || !typesResponse.ok)
           throw new Error(`Ошибка сети`);
@@ -206,7 +207,7 @@ export function TenderChaptersPage() {
     setError(null);
     try {
       const response = await fetch(
-        "http://localhost:8080/api/v1/tender-chapters",
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -238,7 +239,7 @@ export function TenderChaptersPage() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/tender-chapters/${id}`,
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS, id),
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -261,11 +262,11 @@ export function TenderChaptersPage() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/tender-chapters/${id}`,
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS, id),
         { method: "DELETE" }
       );
       if (!response.ok) throw new Error("Ошибка удаления на сервере");
-    } catch (error) {
+    } catch {
       setError("Не удалось удалить раздел. Восстанавливаем список.");
       setChapters(originalChapters);
     }
