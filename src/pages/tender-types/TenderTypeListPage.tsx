@@ -15,6 +15,7 @@ import { LoaderCircle, PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 import { TenderTypeActions } from "@/components/actions/TenderTypeActions";
+import { buildApiUrl, API_CONFIG } from "@/config/api";
 
 // Интерфейс для одного типа тендера (соответствует sqlc-модели TenderType)
 interface TenderType {
@@ -38,7 +39,7 @@ export default function TenderTypeListPage() {
     const fetchTenderTypes = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/v1/tender-types?page_size=100"
+          `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`
         ); // Загрузим до 100 типов
         if (!response.ok) {
           throw new Error(`Ошибка сети: ${response.status}`);
@@ -68,7 +69,7 @@ export default function TenderTypeListPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/v1/tender-types",
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES),
         {
           method: "POST",
           headers: {
@@ -100,7 +101,7 @@ export default function TenderTypeListPage() {
   const handleUpdateType = async (id: number, newTitle: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/tender-types/${id}`,
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES, id),
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -122,7 +123,7 @@ export default function TenderTypeListPage() {
   const handleDeleteType = async (id: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/tender-types/${id}`,
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES, id),
         {
           method: "DELETE",
         }

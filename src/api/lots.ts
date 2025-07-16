@@ -1,5 +1,7 @@
+import { buildApiUrl, API_CONFIG } from '../config/api'
+
 export async function updateLotKeyParameters(lotId: number, params: Record<string, string>) {
-  const res = await fetch(`http://localhost:8080/api/v1/lots/${lotId}/key-parameters`, {
+  const res = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.LOTS, lotId) + '/key-parameters', {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json"

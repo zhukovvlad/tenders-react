@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { buildApiUrl, API_CONFIG } from "@/config/api";
 
 interface Tender {
   id: number;
@@ -30,14 +31,16 @@ export default function TendersPage() {
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/v1/tenders");
+        const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDERS));
         if (!response.ok) {
           throw new Error(`Ошибка сети: ${response.status}`);
         }
         const data: Tender[] = await response.json();
         setTenders(data);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Произошла неизвестная ошибка");
+        setError(
+          e instanceof Error ? e.message : "Произошла неизвестная ошибка"
+        );
       } finally {
         setLoading(false);
       }
@@ -58,17 +61,30 @@ export default function TendersPage() {
         <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[15%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">ID площадки</TableHead>
-              <TableHead className="w-[40%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">Наименование</TableHead>
-              <TableHead className="w-[25%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">Адрес объекта</TableHead>
-              <TableHead className="w-[10%] px-4 py-2 text-center text-sm font-medium uppercase tracking-wider">Предложений</TableHead>
-              <TableHead className="w-[10%] px-4 py-2 text-right text-sm font-medium uppercase tracking-wider">Дата</TableHead>
+              <TableHead className="w-[15%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">
+                ID площадки
+              </TableHead>
+              <TableHead className="w-[40%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">
+                Наименование
+              </TableHead>
+              <TableHead className="w-[25%] px-4 py-2 text-left text-sm font-medium uppercase tracking-wider">
+                Адрес объекта
+              </TableHead>
+              <TableHead className="w-[10%] px-4 py-2 text-center text-sm font-medium uppercase tracking-wider">
+                Предложений
+              </TableHead>
+              <TableHead className="w-[10%] px-4 py-2 text-right text-sm font-medium uppercase tracking-wider">
+                Дата
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {tenders.length > 0 ? (
               tenders.map((tender) => (
-                <TableRow key={tender.id} className="transition-colors duration-150">
+                <TableRow
+                  key={tender.id}
+                  className="transition-colors duration-150"
+                >
                   <TableCell className="px-4 py-2 font-medium whitespace-normal break-words max-w-xs">
                     {tender.etp_id}
                   </TableCell>
@@ -86,25 +102,33 @@ export default function TendersPage() {
                     className="px-4 py-2 text-gray-500 whitespace-normal break-words max-w-xs"
                     title={tender.object_address}
                   >
-                    {tender.object_address || '–'}
+                    {tender.object_address || "–"}
                   </TableCell>
 
                   <TableCell className="px-4 py-2 text-center text-gray-700">
-                    <Badge variant="secondary" className="inline-block px-2 py-1 text-xs rounded-md">
+                    <Badge
+                      variant="secondary"
+                      className="inline-block px-2 py-1 text-xs rounded-md"
+                    >
                       {tender.proposals_count}
                     </Badge>
                   </TableCell>
 
                   <TableCell className="px-4 py-2 text-right text-gray-500">
                     {tender.data_prepared_on_date
-                      ? new Date(tender.data_prepared_on_date).toLocaleDateString()
-                      : '–'}
+                      ? new Date(
+                          tender.data_prepared_on_date
+                        ).toLocaleDateString()
+                      : "–"}
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="px-4 py-6 h-24 text-center text-gray-500">
+                <TableCell
+                  colSpan={5}
+                  className="px-4 py-6 h-24 text-center text-gray-500"
+                >
                   Тендеры не найдены.
                 </TableCell>
               </TableRow>

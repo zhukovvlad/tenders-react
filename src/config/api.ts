@@ -16,6 +16,7 @@ export const API_CONFIG = {
     TENDER_CHAPTERS: '/tender-chapters',
     TENDER_CATEGORIES: '/tender-categories',
     TENDER_TYPES: '/tender-types',
+    LOTS: '/lots',
   }
 } as const;
 

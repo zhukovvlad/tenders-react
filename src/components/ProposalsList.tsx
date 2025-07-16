@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ProposalCard, type Proposal } from "./ProposalCard";
+import { buildApiUrl, API_CONFIG } from "@/config/api";
 
 export function ProposalsList({ lotId }: { lotId: number }) {
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -18,7 +19,7 @@ export function ProposalsList({ lotId }: { lotId: number }) {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/lots/${lotId}/proposals`);
+        const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.LOTS, lotId)}/proposals`);
         if (!response.ok) throw new Error("Не удалось загрузить предложения для этого лота");
         const data: Proposal[] = await response.json();
         setProposals(data);

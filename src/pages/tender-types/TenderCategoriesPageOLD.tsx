@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle, LoaderCircle } from "lucide-react";
 import { TenderCategoryActions } from "@/components/actions/TenderCategoryActions";
+import { buildApiUrl, API_CONFIG } from "@/config/api";
 
 interface TenderCategory {
   id: number;
@@ -62,7 +63,7 @@ export function TenderCategoriesPage() {
   const fetchTypes = async () => {
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/tender-types?page_size=100"
+        `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`
       );
       if (!res.ok) throw new Error("Ошибка загрузки типов");
       setTypes(await res.json());
@@ -74,7 +75,7 @@ export function TenderCategoriesPage() {
   const fetchChapters = async (typeId: string) => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/tender-chapters?tender_type_id=${typeId}`
+        `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?tender_type_id=${typeId}`
       );
       if (!res.ok) throw new Error("Ошибка загрузки разделов");
       setChapters(await res.json());
@@ -86,7 +87,7 @@ export function TenderCategoriesPage() {
   const fetchCategories = async () => {
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/tender-categories?page_size=100"
+        `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES)}?page_size=100`
       );
       if (!res.ok) throw new Error("Ошибка загрузки категорий");
       setCategories(await res.json());
@@ -122,7 +123,7 @@ export function TenderCategoriesPage() {
     if (!newTitle || !selectedChapterId) return;
     setIsSubmitting(true);
     try {
-      await fetch("http://localhost:8080/api/v1/tender-categories", {
+      await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -155,7 +156,7 @@ export function TenderCategoriesPage() {
     setIsSubmitting(true);
     try {
       await fetch(
-        `http://localhost:8080/api/v1/tender-categories/${editingCategoryId}`,
+        buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES, editingCategoryId),
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -177,7 +178,7 @@ export function TenderCategoriesPage() {
   const handleDelete = async (id: number) => {
     setIsSubmitting(true);
     try {
-      await fetch(`http://localhost:8080/api/v1/tender-categories/${id}`, {
+      await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES, id), {
         method: "DELETE",
       });
       await fetchCategories();

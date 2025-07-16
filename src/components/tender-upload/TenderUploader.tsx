@@ -10,9 +10,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "../ui/progress";
 import { Input } from "../ui/input";
 import { useEffect, useRef, useState } from "react";
+import { API_CONFIG } from "@/config/api";
 
 type TaskStatus = "idle" | "uploading" | "processing" | "completed" | "failed";
-const API_BASE_URL = "http://localhost:8080/api/v1";
 
 // ============================================================================
 export default function TenderUploader() {
@@ -86,7 +86,7 @@ export default function TenderUploader() {
     formData.append("tenderFile", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/upload-tender`, { method: "POST", body: formData });
+      const response = await fetch(`${API_CONFIG.API_BASE}/upload-tender`, { method: "POST", body: formData });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Не удалось загрузить файл.");
       
@@ -106,7 +106,7 @@ export default function TenderUploader() {
 
     intervalRef.current = setInterval(async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/status`);
+        const response = await fetch(`${API_CONFIG.API_BASE}/tasks/${taskId}/status`);
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Задача не найдена.");
 
