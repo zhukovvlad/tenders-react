@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { LoaderCircle, PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-import { TenderTypeActions } from "@/components/TenderTypeActions";
+import { TenderTypeActions } from "@/components/actions/TenderTypeActions";
 
 // Интерфейс для одного типа тендера (соответствует sqlc-модели TenderType)
 interface TenderType {

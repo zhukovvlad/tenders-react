@@ -36,3 +36,22 @@ export interface TenderPageData {
   details: TenderDetails | null;
   lots: Lot[];
 }
+
+export interface TenderCategory {
+  id: number;
+  title: string;
+  tender_chapter_id: number;
+  tender_chapter_title: string;
+  tender_type_id: number;
+}
+
+export interface TenderChapter {
+  id: number;
+  title: string;
+  tender_type_id: number;
+}
+
+export interface TenderType {
+  id: number;
+  title: string;
+}

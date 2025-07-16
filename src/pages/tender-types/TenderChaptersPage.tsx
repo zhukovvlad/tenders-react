@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusCircle, LoaderCircle } from "lucide-react";
-import { TenderChapterActions } from "@/components/TenderChapterActions";
+import { TenderChapterActions } from "@/components/actions/TenderChapterActions";
 
 // --- Определяем типы данных ---
 
