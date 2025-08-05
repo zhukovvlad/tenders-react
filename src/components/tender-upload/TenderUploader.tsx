@@ -166,6 +166,7 @@ export default function TenderUploader() {
 
   const isUploadingOrProcessing =
     status === "uploading" || status === "processing";
+  const isCompleteOrFailed = status === "completed" || status === "failed";
 
   // --- Рендеринг компонента ---
   return (
@@ -182,17 +183,21 @@ export default function TenderUploader() {
       <CardContent className="space-y-4">
         {/* === Зона Drag & Drop === */}
         <div
-          className={`relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 ease-in-out
+          className={`relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-lg transition-colors duration-200 ease-in-out
             ${
-              isDragging
-                ? "border-primary bg-primary/10"
-                : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"
+              isCompleteOrFailed
+                ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
+                : isDragging
+                ? "border-primary bg-primary/10 cursor-pointer"
+                : "border-gray-300 hover:border-primary/50 hover:bg-gray-50 cursor-pointer"
             }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragEvents}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onClick={() => fileInputRef.current?.click()}
+          onDrop={isCompleteOrFailed ? undefined : handleDrop}
+          onDragOver={isCompleteOrFailed ? undefined : handleDragEvents}
+          onDragEnter={isCompleteOrFailed ? undefined : handleDragEnter}
+          onDragLeave={isCompleteOrFailed ? undefined : handleDragLeave}
+          onClick={
+            isCompleteOrFailed ? undefined : () => fileInputRef.current?.click()
+          }
         >
           <Input
             ref={fileInputRef}
@@ -201,7 +206,7 @@ export default function TenderUploader() {
             className="hidden"
             accept=".xlsx, .xls"
             onChange={handleFileChange}
-            disabled={isUploadingOrProcessing}
+            disabled={isUploadingOrProcessing || isCompleteOrFailed}
           />
           <div className="text-center">
             <UploadCloud
@@ -220,7 +225,9 @@ export default function TenderUploader() {
         {/* === Чекбокс для включения ИИ === */}
         <div
           className={`flex items-center space-x-2 p-3 rounded-lg border transition-colors duration-200 ${
-            enableAi
+            isCompleteOrFailed
+              ? "bg-gray-100 border-gray-200 opacity-50"
+              : enableAi
               ? "bg-green-50 border-green-200"
               : "bg-blue-50 border-blue-200"
           }`}
@@ -231,28 +238,52 @@ export default function TenderUploader() {
             onCheckedChange={(checked: boolean | "indeterminate") =>
               setEnableAi(checked === true)
             }
-            disabled={isUploadingOrProcessing}
-            className="border-2 border-gray-400 data-[state=checked]:border-green-600 data-[state=checked]:bg-green-600"
+            disabled={isUploadingOrProcessing || isCompleteOrFailed}
+            className={`border-2 data-[state=checked]:border-green-600 data-[state=checked]:bg-green-600 ${
+              isCompleteOrFailed
+                ? "cursor-not-allowed border-gray-300"
+                : "cursor-pointer border-gray-400"
+            }`}
           />
           <label
             htmlFor="enable-ai-processing"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-800"
+            className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-800 ${
+              isCompleteOrFailed ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             Включить ИИ для обработки загружаемой таблицы
           </label>
         </div>
 
         {/* === Отображение статусов === */}
-        {file && !isUploadingOrProcessing && status !== "completed" && (
-          <div className="text-sm text-muted-foreground flex items-center justify-between gap-2 p-2 border rounded-md">
+        {file &&
+          !isUploadingOrProcessing &&
+          status !== "completed" &&
+          status !== "failed" && (
+            <div className="text-sm text-muted-foreground flex items-center justify-between gap-2 p-2 border rounded-md">
+              <div className="flex items-center gap-2 truncate">
+                <File size={16} /> <span className="truncate">{file.name}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => resetState()}
+                className="h-6 w-6 flex-shrink-0"
+              >
+                <XCircle size={16} />
+              </Button>
+            </div>
+          )}
+        {file && isCompleteOrFailed && (
+          <div className="text-sm text-muted-foreground flex items-center justify-between gap-2 p-2 border rounded-md opacity-50 bg-gray-50">
             <div className="flex items-center gap-2 truncate">
               <File size={16} /> <span className="truncate">{file.name}</span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => resetState()}
-              className="h-6 w-6 flex-shrink-0"
+              disabled
+              className="h-6 w-6 flex-shrink-0 cursor-not-allowed"
             >
               <XCircle size={16} />
             </Button>
@@ -270,26 +301,48 @@ export default function TenderUploader() {
           </div>
         )}
         {status === "completed" && (
-          <div className="text-green-600 flex items-center gap-2 p-3 bg-green-50 rounded-md">
-            <CheckCircle2 />
-            <span>
-              Обработка успешно завершена
-              {enableAi ? " с использованием ИИ" : ""}!
-            </span>
+          <div className="text-green-600 flex items-center justify-between gap-2 p-3 bg-green-50 rounded-md">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 />
+              <span>
+                Обработка успешно завершена
+                {enableAi ? " с использованием ИИ" : ""}!
+              </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => resetState()}
+              className="text-green-900 dark:text-green-100 border-green-600 dark:border-green-400 bg-green-200 dark:bg-green-800 hover:bg-green-300 dark:hover:bg-green-700 hover:text-green-950 dark:hover:text-white hover:border-green-700 dark:hover:border-green-300 h-8 px-4 font-medium shadow-md cursor-pointer"
+            >
+              ОК
+            </Button>
           </div>
         )}
         {status === "failed" && (
-          <div className="text-red-600 flex items-center gap-2 p-3 bg-red-50 rounded-md">
-            <XCircle />
-            <span>Ошибка: {errorMessage}</span>
+          <div className="text-red-600 flex items-center justify-between gap-2 p-3 bg-red-50 rounded-md">
+            <div className="flex items-center gap-2">
+              <XCircle />
+              <span>Ошибка: {errorMessage}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => resetState()}
+              className="text-red-900 dark:text-red-100 border-red-600 dark:border-red-400 bg-red-200 dark:bg-red-800 hover:bg-red-300 dark:hover:bg-red-700 hover:text-red-950 dark:hover:text-white hover:border-red-700 dark:hover:border-red-300 h-8 px-4 font-medium shadow-md cursor-pointer"
+            >
+              ОК
+            </Button>
           </div>
         )}
       </CardContent>
       <CardFooter>
         <Button
           onClick={handleUpload}
-          disabled={!file || isUploadingOrProcessing}
-          className="w-full"
+          disabled={!file || isUploadingOrProcessing || isCompleteOrFailed}
+          className={`w-full ${
+            isCompleteOrFailed ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           {enableAi ? "Загрузить и обработать с ИИ" : "Загрузить и обработать"}
         </Button>
