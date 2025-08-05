@@ -20,7 +20,13 @@ import { Checkbox } from "../ui/checkbox";
 import { useEffect, useRef, useState } from "react";
 import { API_CONFIG } from "@/config/api";
 
-type TaskStatus = "idle" | "uploading" | "processing" | "completed" | "failed";
+type TaskStatus =
+  | "idle"
+  | "uploading"
+  | "processing"
+  | "completed"
+  | "completed_with_errors"
+  | "failed";
 
 // ============================================================================
 export default function TenderUploader() {
@@ -143,6 +149,18 @@ export default function TenderUploader() {
           setProgress(100);
           toast.success("Обработка тендера успешно завершена!");
           if (intervalRef.current) clearInterval(intervalRef.current);
+        } else if (result.status === "completed_with_errors") {
+          // НОВЫЙ БЛОК: Обработка завершения с ошибками
+          setStatus("failed");
+          const errorMsg =
+            result.error ||
+            "Обработка завершена с ошибками. Проверьте структуру файла.";
+          setErrorMessage(errorMsg);
+          toast.warning("Обработка завершена с ошибками", {
+            description:
+              "Файл был обработан, но найдены проблемы со структурой данных.",
+          });
+          if (intervalRef.current) clearInterval(intervalRef.current);
         } else if (result.status === "failed") {
           setStatus("failed");
           const errorMsg = result.error || "Произошла неизвестная ошибка.";
@@ -166,7 +184,10 @@ export default function TenderUploader() {
 
   const isUploadingOrProcessing =
     status === "uploading" || status === "processing";
-  const isCompleteOrFailed = status === "completed" || status === "failed";
+  const isCompleteOrFailed =
+    status === "completed" ||
+    status === "failed" ||
+    status === "completed_with_errors";
 
   // --- Рендеринг компонента ---
   return (
