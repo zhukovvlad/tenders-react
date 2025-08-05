@@ -6,9 +6,17 @@ import { toast } from "sonner";
 
 import { CheckCircle2, Loader, XCircle, File, UploadCloud } from "lucide-react";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Progress } from "../ui/progress";
 import { Input } from "../ui/input";
+import { Checkbox } from "../ui/checkbox";
 import { useEffect, useRef, useState } from "react";
 import { API_CONFIG } from "@/config/api";
 
@@ -22,6 +30,7 @@ export default function TenderUploader() {
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [enableAi, setEnableAi] = useState<boolean>(false); // Новое состояние для ИИ (по умолчанию выключен)
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +38,10 @@ export default function TenderUploader() {
   // --- Логика обработки файла ---
   const processFile = (selectedFile: File) => {
     if (!selectedFile) return;
-    const allowedTypes = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"];
+    const allowedTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
     if (!allowedTypes.includes(selectedFile.type)) {
       toast.error("Неверный формат файла", {
         description: "Пожалуйста, выберите файл .xlsx или .xls.",
@@ -57,9 +69,18 @@ export default function TenderUploader() {
     }
   };
 
-  const handleDragEvents = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); };
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => { handleDragEvents(e); setIsDragging(true); };
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { handleDragEvents(e); setIsDragging(false); };
+  const handleDragEvents = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    handleDragEvents(e);
+    setIsDragging(true);
+  };
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    handleDragEvents(e);
+    setIsDragging(false);
+  };
 
   // --- Управление состоянием ---
   const resetState = (keepFile: boolean = false) => {
@@ -84,12 +105,17 @@ export default function TenderUploader() {
 
     const formData = new FormData();
     formData.append("tenderFile", file);
+    formData.append("enable_ai", enableAi.toString()); // Добавляем флаг ИИ
 
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE}/upload-tender`, { method: "POST", body: formData });
+      const response = await fetch(`${API_CONFIG.API_BASE}/upload-tender`, {
+        method: "POST",
+        body: formData,
+      });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Не удалось загрузить файл.");
-      
+      if (!response.ok)
+        throw new Error(result.error || "Не удалось загрузить файл.");
+
       toast.success("Файл принят, начинается обработка.", { id: toastId });
       setTaskId(result.task_id);
       setStatus("processing");
@@ -106,7 +132,9 @@ export default function TenderUploader() {
 
     intervalRef.current = setInterval(async () => {
       try {
-        const response = await fetch(`${API_CONFIG.API_BASE}/tasks/${taskId}/status`);
+        const response = await fetch(
+          `${API_CONFIG.API_BASE}/tasks/${taskId}/status`
+        );
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Задача не найдена.");
 
@@ -131,10 +159,13 @@ export default function TenderUploader() {
       }
     }, 3000);
 
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [status, taskId]);
 
-  const isUploadingOrProcessing = status === 'uploading' || status === 'processing';
+  const isUploadingOrProcessing =
+    status === "uploading" || status === "processing";
 
   // --- Рендеринг компонента ---
   return (
@@ -152,41 +183,115 @@ export default function TenderUploader() {
         {/* === Зона Drag & Drop === */}
         <div
           className={`relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 ease-in-out
-            ${isDragging ? 'border-primary bg-primary/10' : 'border-gray-300 hover:border-primary/50 hover:bg-gray-50'}`}
-          onDrop={handleDrop} onDragOver={handleDragEvents} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave}
+            ${
+              isDragging
+                ? "border-primary bg-primary/10"
+                : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"
+            }`}
+          onDrop={handleDrop}
+          onDragOver={handleDragEvents}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Input ref={fileInputRef} id="tenderFile" type="file" className="hidden" accept=".xlsx, .xls" onChange={handleFileChange} disabled={isUploadingOrProcessing} />
+          <Input
+            ref={fileInputRef}
+            id="tenderFile"
+            type="file"
+            className="hidden"
+            accept=".xlsx, .xls"
+            onChange={handleFileChange}
+            disabled={isUploadingOrProcessing}
+          />
           <div className="text-center">
-            <UploadCloud className={`mx-auto h-12 w-12 ${isDragging ? 'text-primary' : 'text-gray-400'}`} />
-            <p className="mt-2 text-sm text-gray-500"><span className="font-semibold">Нажмите для загрузки</span> или перетащите файл</p>
+            <UploadCloud
+              className={`mx-auto h-12 w-12 ${
+                isDragging ? "text-primary" : "text-gray-400"
+              }`}
+            />
+            <p className="mt-2 text-sm text-gray-500">
+              <span className="font-semibold">Нажмите для загрузки</span> или
+              перетащите файл
+            </p>
             <p className="text-xs text-gray-400">XLSX или XLS</p>
           </div>
         </div>
 
+        {/* === Чекбокс для включения ИИ === */}
+        <div
+          className={`flex items-center space-x-2 p-3 rounded-lg border transition-colors duration-200 ${
+            enableAi
+              ? "bg-green-50 border-green-200"
+              : "bg-blue-50 border-blue-200"
+          }`}
+        >
+          <Checkbox
+            id="enable-ai-processing"
+            checked={enableAi}
+            onCheckedChange={(checked: boolean | "indeterminate") =>
+              setEnableAi(checked === true)
+            }
+            disabled={isUploadingOrProcessing}
+            className="border-2 border-gray-400 data-[state=checked]:border-green-600 data-[state=checked]:bg-green-600"
+          />
+          <label
+            htmlFor="enable-ai-processing"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-800"
+          >
+            Включить ИИ для обработки загружаемой таблицы
+          </label>
+        </div>
+
         {/* === Отображение статусов === */}
-        {file && !isUploadingOrProcessing && status !== 'completed' && (
+        {file && !isUploadingOrProcessing && status !== "completed" && (
           <div className="text-sm text-muted-foreground flex items-center justify-between gap-2 p-2 border rounded-md">
-            <div className="flex items-center gap-2 truncate"><File size={16} /> <span className="truncate">{file.name}</span></div>
-            <Button variant="ghost" size="icon" onClick={() => resetState()} className="h-6 w-6 flex-shrink-0"><XCircle size={16} /></Button>
+            <div className="flex items-center gap-2 truncate">
+              <File size={16} /> <span className="truncate">{file.name}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => resetState()}
+              className="h-6 w-6 flex-shrink-0"
+            >
+              <XCircle size={16} />
+            </Button>
           </div>
         )}
         {isUploadingOrProcessing && (
           <div className="w-full pt-2">
             <Progress value={progress} className="w-full" />
-            <p className="text-sm text-muted-foreground mt-2 text-center flex items-center justify-center gap-2"><Loader className="animate-spin" size={16} />{status === 'uploading' ? 'Загрузка...' : 'Обработка на сервере...'}</p>
+            <p className="text-sm text-muted-foreground mt-2 text-center flex items-center justify-center gap-2">
+              <Loader className="animate-spin" size={16} />
+              {status === "uploading"
+                ? "Загрузка..."
+                : `Обработка на сервере${enableAi ? " с ИИ" : ""}...`}
+            </p>
           </div>
         )}
-        {status === 'completed' && (
-          <div className="text-green-600 flex items-center gap-2 p-3 bg-green-50 rounded-md"><CheckCircle2 /><span>Обработка успешно завершена!</span></div>
+        {status === "completed" && (
+          <div className="text-green-600 flex items-center gap-2 p-3 bg-green-50 rounded-md">
+            <CheckCircle2 />
+            <span>
+              Обработка успешно завершена
+              {enableAi ? " с использованием ИИ" : ""}!
+            </span>
+          </div>
         )}
-        {status === 'failed' && (
-          <div className="text-red-600 flex items-center gap-2 p-3 bg-red-50 rounded-md"><XCircle /><span>Ошибка: {errorMessage}</span></div>
+        {status === "failed" && (
+          <div className="text-red-600 flex items-center gap-2 p-3 bg-red-50 rounded-md">
+            <XCircle />
+            <span>Ошибка: {errorMessage}</span>
+          </div>
         )}
       </CardContent>
       <CardFooter>
-        <Button onClick={handleUpload} disabled={!file || isUploadingOrProcessing} className="w-full">
-          Загрузить и обработать
+        <Button
+          onClick={handleUpload}
+          disabled={!file || isUploadingOrProcessing}
+          className="w-full"
+        >
+          {enableAi ? "Загрузить и обработать с ИИ" : "Загрузить и обработать"}
         </Button>
       </CardFooter>
     </Card>
