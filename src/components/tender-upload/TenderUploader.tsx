@@ -110,7 +110,7 @@ export default function TenderUploader() {
     const toastId = toast.loading("Загрузка файла на сервер...");
 
     const formData = new FormData();
-    formData.append("tenderFile", file);
+    formData.append("file", file);
     formData.append("enable_ai", enableAi.toString()); // Добавляем флаг ИИ
 
     try {
