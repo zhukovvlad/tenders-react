@@ -23,8 +23,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target:
-          process.env.VITE_API_PROXY_TARGET || "http://local-api.dev:8080",
+        target: process.env.VITE_API_PROXY_TARGET || "http://localhost:8080",
         changeOrigin: true,
         // keep /api prefix as-is so /api/v1/... maps directly
         // If backend does not include /api prefix internally, set rewrite: p => p.replace(/^\/api/, '')

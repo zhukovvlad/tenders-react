@@ -4,10 +4,8 @@
  */
 
 const isDev = import.meta.env.DEV;
-const windowHost = typeof window !== "undefined" ? window.location.host : "";
-// If in dev and we're on localhost (or 127.*) we prefer a relative /api path so Vite proxy handles backend.
-// This avoids hardcoding a .dev domain that triggers HSTS HTTPS upgrade issues.
-const useRelativeApi = isDev && /^(localhost|127\.)/.test(windowHost);
+// In dev mode, always use relative paths so Vite proxy handles backend requests
+const useRelativeApi = isDev;
 
 export const API_CONFIG = {
   BASE_URL: useRelativeApi
