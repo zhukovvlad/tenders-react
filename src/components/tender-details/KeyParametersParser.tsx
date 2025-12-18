@@ -35,7 +35,6 @@ const PARAMETER_NAMES: { [key: string]: string } = {
     processed_at: 'Время обработки',
     source: 'Источник',
     ai: 'ИИ-анализ',
-    '': '',
 };
 
 const formatKey = (key: string) => {
@@ -102,11 +101,10 @@ const renderParameters = (data: any, level = 0): React.ReactNode => {
 
 
 export const KeyParametersParser: React.FC<KeyParametersParserProps> = ({ keyParameters }) => {
-    if (!keyParameters) {
-        return <div>Нет ключевых параметров.</div>;
-    }
-
     const parsedData = useMemo(() => {
+        if (!keyParameters) {
+            return null;
+        }
         if (typeof keyParameters.ai === 'string') {
             try {
                 const result = parseGoMapString(keyParameters.ai);
@@ -125,7 +123,11 @@ export const KeyParametersParser: React.FC<KeyParametersParserProps> = ({ keyPar
     }, [keyParameters]);
 
     if (!parsedData) {
-        return <div className="text-red-500">Ошибка при обработке ключевых параметров.</div>;
+        return keyParameters ? (
+            <div className="text-red-500">Ошибка при обработке ключевых параметров.</div>
+        ) : (
+            <div>Нет ключевых параметров.</div>
+        );
     }
 
     return (

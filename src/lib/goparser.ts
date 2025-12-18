@@ -37,7 +37,13 @@ export const parseGoMapString = (str: string): Record<string, any> | any[] | str
             let lastSplit = 0;
             for(let i = 0; i < content.length; i++) {
                 if (content[i] === '[') balance++;
-                else if (content[i] === ']') balance--;
+                else if (content[i] === ']') {
+                    balance--;
+                    if (balance < 0) {
+                        console.warn('Malformed map string, unmatched closing bracket:', s);
+                        return s;
+                    }
+                }
                 else if (content[i] === ' ' && balance === 0) {
                     const part = content.substring(lastSplit, i);
                     const colonIndex = part.indexOf(':');
@@ -47,7 +53,9 @@ export const parseGoMapString = (str: string): Record<string, any> | any[] | str
                     }
                     const key = part.substring(0, colonIndex);
                     const value = part.substring(colonIndex + 1);
-                    result[key] = fromGo(value);
+                    if (key) {
+                        result[key] = fromGo(value);
+                    }
                     lastSplit = i + 1;
                 }
             }
