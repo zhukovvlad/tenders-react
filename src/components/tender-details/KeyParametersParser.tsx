@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { parseGoMapString } from '@/lib/goparser';
 
@@ -61,7 +61,24 @@ const renderParameters = (data: any, level = 0): React.ReactNode => {
 
     if (Array.isArray(data)) {
         if (data.length === 0) return <Badge variant="secondary">Нет данных</Badge>;
-        return <span className="text-gray-700 dark:text-gray-300">{data.join(', ')}</span>;
+        
+        // Check if all elements are primitives
+        const allPrimitives = data.every(item => typeof item !== 'object' || item === null);
+        
+        if (allPrimitives) {
+            return <span className="text-gray-700 dark:text-gray-300">{data.join(', ')}</span>;
+        }
+        
+        // Render complex arrays with nested structures
+        return (
+            <ul className="pl-4">
+                {data.map((item, index) => (
+                    <li key={index} className="mt-1">
+                        {renderParameters(item, level + 1)}
+                    </li>
+                ))}
+            </ul>
+        );
     }
 
     return (
@@ -89,16 +106,26 @@ export const KeyParametersParser: React.FC<KeyParametersParserProps> = ({ keyPar
         return <div>Нет ключевых параметров.</div>;
     }
 
-    let parsedData;
-    if (typeof keyParameters.ai === 'string') {
-        try {
-            parsedData = parseGoMapString(keyParameters.ai);
-        } catch (error) {
-            console.error("Error parsing key_parameters:", error);
-            return <div className="text-red-500">Ошибка при обработке ключевых параметров.</div>;
+    const parsedData = useMemo(() => {
+        if (typeof keyParameters.ai === 'string') {
+            try {
+                const result = parseGoMapString(keyParameters.ai);
+                // If parser returned the same string, it failed to parse
+                if (typeof result === 'string' && result === keyParameters.ai) {
+                    console.error("Failed to parse key_parameters.ai - malformed input");
+                    return null;
+                }
+                return result;
+            } catch (error) {
+                console.error("Error parsing key_parameters:", error);
+                return null;
+            }
         }
-    } else {
-        parsedData = keyParameters;
+        return keyParameters;
+    }, [keyParameters]);
+
+    if (!parsedData) {
+        return <div className="text-red-500">Ошибка при обработке ключевых параметров.</div>;
     }
 
     return (

@@ -6,6 +6,13 @@
  * Example input:
  * "map[category:Нулевой цикл data:map[main_pile_specs:map[...]]]"
  *
+ * **Limitations:**
+ * - Assumes space-delimited key-value pairs
+ * - Does not support escaped spaces, colons, or brackets within string values
+ * - Does not support quoted strings
+ * - Values containing spaces must be enclosed in nested structures (maps/arrays)
+ * - Example that would fail: `map[name:John Doe age:30]` (space in value)
+ *
  * @param str The string to parse.
  * @returns A nested JavaScript object, array, primitive value, or the original input.
  *   - Objects are returned as Record<string, any>
@@ -78,7 +85,8 @@ export const parseGoMapString = (str: string): Record<string, any> | any[] | str
             const lastItem = content.substring(lastSplit).trim();
             if (lastItem) items.push(fromGo(lastItem));
             
-            return items.length > 0 ? items : content.split(' ').filter(Boolean);
+            // Return parsed items, or empty array if none found
+            return items;
         }
         if (s === '<nil>') return null;
         if (s === 'true') return true;
