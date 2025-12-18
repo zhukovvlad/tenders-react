@@ -21,7 +21,16 @@ export function LotSection({ lot }: LotSectionProps) {
         <TabsContent value="proposals" className="mt-4">
           <ProposalsList lotId={lot.id} />
         </TabsContent>
-        {/* ... другие вкладки ... */}
+        <TabsContent value="comparison" className="mt-4">
+          <div className="text-muted-foreground p-6 text-center border rounded-lg">
+            Анализ скоро будет доступен.
+          </div>
+        </TabsContent>
+        <TabsContent value="documents" className="mt-4">
+          <div className="text-muted-foreground p-6 text-center border rounded-lg">
+            Документы скоро будут доступны.
+          </div>
+        </TabsContent>
       </Tabs>
     </section>
   );

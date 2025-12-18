@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { parseGoMapString } from '@/lib/goparser';
 
 interface KeyParametersParserProps {
-  keyParameters: any;
+  keyParameters: Record<string, unknown> | undefined;
 }
 
 const PARAMETER_NAMES: { [key: string]: string } = {
@@ -42,7 +42,13 @@ const formatKey = (key: string) => {
     return PARAMETER_NAMES[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
+const MAX_DEPTH = 10;
+
 const renderParameters = (data: any, level = 0): React.ReactNode => {
+    if (level >= MAX_DEPTH) {
+        return <Badge variant="secondary">...</Badge>;
+    }
+
     if (data === null || data === undefined || (typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length === 0)) {
         return <Badge variant="secondary">Нет данных</Badge>;
     }
