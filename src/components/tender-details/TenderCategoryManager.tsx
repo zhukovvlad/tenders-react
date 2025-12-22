@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { LoaderCircle, Pencil, XCircle } from "lucide-react";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
+import { apiFetch } from "@/api/fetchClient";
 
 // --- Определяем типы данных, которые нам нужны ---
 interface TenderDetails {
@@ -63,7 +64,7 @@ export function TenderCategoryManager({
     if (types.length === 0) {
       setIsLoadingTypes(true);
       try {
-        const response = await fetch(
+        const response = await apiFetch(
           `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`
         );
         if (!response.ok) throw new Error("Не удалось загрузить типы");
@@ -83,7 +84,7 @@ export function TenderCategoryManager({
       return;
     }
     setIsLoadingChapters(true);
-    fetch(
+    apiFetch(
       `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES, selectedTypeId)}/chapters`
     )
       .then((res) => res.json())
@@ -98,7 +99,7 @@ export function TenderCategoryManager({
       return;
     }
     setIsLoadingCategories(true);
-    fetch(
+    apiFetch(
       `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS, selectedChapterId)}/categories`
     )
       .then((res) => res.json())
@@ -110,7 +111,7 @@ export function TenderCategoryManager({
   const handleSave = async (newCategoryId: number | null) => {
     setIsSubmitting(true);
     try {
-      await fetch(
+      await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDERS, tender.id),
         {
           method: "PATCH",

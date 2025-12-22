@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
+import { apiFetch } from "@/api/fetchClient";
 
 interface Tender {
   id: number;
@@ -31,7 +32,7 @@ export default function TendersPage() {
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDERS));
+        const response = await apiFetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDERS));
         if (!response.ok) {
           throw new Error(`Ошибка сети: ${response.status}`);
         }

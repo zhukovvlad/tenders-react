@@ -18,7 +18,7 @@ import { Progress } from "../ui/progress";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { useEffect, useRef, useState } from "react";
-import { API_CONFIG } from "@/config/api";
+import { apiFetch } from "@/api/fetchClient";
 
 type TaskStatus =
   | "idle"
@@ -114,7 +114,7 @@ export default function TenderUploader() {
     formData.append("enable_ai", enableAi.toString()); // Добавляем флаг ИИ
 
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE}/upload-tender`, {
+      const response = await apiFetch("/api/v1/upload-tender", {
         method: "POST",
         body: formData,
       });
@@ -138,9 +138,7 @@ export default function TenderUploader() {
 
     intervalRef.current = setInterval(async () => {
       try {
-        const response = await fetch(
-          `${API_CONFIG.API_BASE}/tasks/${taskId}/status`
-        );
+        const response = await apiFetch(`/api/v1/tasks/${taskId}/status`);
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Задача не найдена.");
 

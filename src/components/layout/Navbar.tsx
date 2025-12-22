@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,9 +12,18 @@ import { LogOut, Moon, Settings, Sun, User } from "lucide-react";
 import { useTheme } from "../providers/theme-provider";
 import { Button } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
+import { useAuth } from "../../auth/AuthContext";
 
 const Navbar = () => {
   const { setTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const nav = useNavigate();
+
+  async function onLogout() {
+    await logout();
+    nav("/login", { replace: true });
+  }
+
   return (
     <nav className="p-4 flex items-center justify-between">
       {/* LEFT */}
@@ -63,11 +72,15 @@ const Navbar = () => {
           <DropdownMenuTrigger className="cursor-pointer">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>
+                {(user?.email?.[0] || "U").toUpperCase()}
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent sideOffset={10}>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {user ? `${user.email} (${user.role})` : "My Account"}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <User className="h-[1.2rem] w-[1.2rem] mr-2" />
@@ -79,7 +92,7 @@ const Navbar = () => {
                 Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" variant="destructive">
+            <DropdownMenuItem className="cursor-pointer" variant="destructive" onClick={onLogout}>
               <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
               Logout
             </DropdownMenuItem>

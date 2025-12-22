@@ -1,5 +1,6 @@
 import type { TenderCategory, TenderChapter, TenderType } from "@/types/tender"; // Предполагаем, что типы вынесены
-import { API_CONFIG } from "@/config/api";
+import { API_CONFIG, buildApiUrl } from "@/config/api";
+import { apiFetch } from "./fetchClient";
 
 const handleResponse = async (res: Response) => {
   if (!res.ok) {
@@ -10,19 +11,19 @@ const handleResponse = async (res: Response) => {
 };
 
 export const getTypes = (): Promise<TenderType[]> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_TYPES}?page_size=100`).then(handleResponse);
+  return apiFetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`).then(handleResponse);
 };
 
 export const getChapters = (typeId: string): Promise<TenderChapter[]> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_CHAPTERS}?tender_type_id=${typeId}`).then(handleResponse);
+  return apiFetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?tender_type_id=${typeId}`).then(handleResponse);
 };
 
 export const getCategories = (): Promise<TenderCategory[]> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_CATEGORIES}?page_size=100`).then(handleResponse);
+  return apiFetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES)}?page_size=100`).then(handleResponse);
 };
 
 export const createCategory = (data: { title: string; tender_chapter_id: number }): Promise<TenderCategory> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_CATEGORIES}`, {
+  return apiFetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -30,7 +31,7 @@ export const createCategory = (data: { title: string; tender_chapter_id: number 
 };
 
 export const updateCategory = (id: number, data: { title: string; tender_chapter_id: number }): Promise<TenderCategory> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_CATEGORIES}/${id}`, {
+  return apiFetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES, id), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -38,7 +39,7 @@ export const updateCategory = (id: number, data: { title: string; tender_chapter
 };
 
 export const deleteCategory = (id: number): Promise<void> => {
-  return fetch(`${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.TENDER_CATEGORIES}/${id}`, {
+  return apiFetch(buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CATEGORIES, id), {
     method: "DELETE",
   }).then(res => {
     if (!res.ok) throw new Error("Ошибка удаления");

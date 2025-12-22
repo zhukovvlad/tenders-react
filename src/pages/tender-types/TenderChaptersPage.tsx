@@ -20,6 +20,7 @@ import {
 import { PlusCircle, LoaderCircle } from "lucide-react";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
 import { TenderChapterActions } from "@/components/actions/TenderChapterActions";
+import { apiFetch } from "@/api/fetchClient";
 
 // --- Определяем типы данных ---
 
@@ -160,7 +161,7 @@ export function TenderChaptersPage() {
   const fetchTenderChapters = useCallback(async () => {
     // Не включаем здесь setLoading(true), чтобы таблица не "моргала" при обновлении
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?page_size=100`
       );
       if (!response.ok) throw new Error(`Ошибка сети при загрузке разделов`);
@@ -179,8 +180,8 @@ export function TenderChaptersPage() {
       setError(null);
       try {
         const [chaptersResponse, typesResponse] = await Promise.all([
-          fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?page_size=100`),
-          fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`),
+          apiFetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS)}?page_size=100`),
+          apiFetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`),
         ]);
         if (!chaptersResponse.ok || !typesResponse.ok)
           throw new Error(`Ошибка сети`);
@@ -206,7 +207,7 @@ export function TenderChaptersPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS),
         {
           method: "POST",
@@ -238,7 +239,7 @@ export function TenderChaptersPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS, id),
         {
           method: "PUT",
@@ -261,7 +262,7 @@ export function TenderChaptersPage() {
     setChapters((prev) => prev.filter((c) => c.id !== id));
     setError(null);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_CHAPTERS, id),
         { method: "DELETE" }
       );

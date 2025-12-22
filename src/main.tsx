@@ -3,6 +3,10 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
+import { AuthProvider } from "./auth/AuthContext";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
+
 // Импортируем Layout и страницы
 import MainLayout from "./components/layout/Layout.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
@@ -19,8 +23,16 @@ import UploadTenderPage from "./pages/UploadTenderPage.tsx";
 // Создаем роутер
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
     // Главный маршрут использует MainLayout как обертку
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/",
@@ -68,6 +80,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );
