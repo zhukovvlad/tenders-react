@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { apiFetch } from "../api/fetchClient";
 
 export type AuthUser = { id: number; email: string; role: string };
@@ -16,14 +16,15 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mounted = useRef(false);
 
-  async function refreshMe() {
+  const refreshMe = useCallback(async () => {
     const res = await apiFetch("/api/v1/auth/me", { method: "GET" });
     if (res.ok) setUser((await res.json()) as AuthUser);
     else setUser(null);
-  }
+  }, []);
 
-  async function login(email: string, password: string) {
+  const login = useCallback(async (email: string, password: string) => {
     const res = await apiFetch("/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,14 +32,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     if (!res.ok) throw new Error("login_failed");
     await refreshMe();
-  }
+  }, [refreshMe]);
 
-  async function logout() {
-    await apiFetch("/api/v1/auth/logout", { method: "POST" }); // CSRF проставится автоматом
-    setUser(null);
-  }
+  const logout = useCallback(async () => {
+    try {
+      const res = await apiFetch("/api/v1/auth/logout", { method: "POST" });
+      if (res.ok) {
+        setUser(null);
+      } else {
+        console.error("Logout failed on server");
+        // Still clear local state for security
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Clear local state even on network error
+      setUser(null);
+    }
+  }, []);
 
   useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+
     (async () => {
       try {
         await refreshMe();
@@ -46,9 +62,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [refreshMe]);
 
-  const value = useMemo(() => ({ user, isLoading, login, logout, refreshMe }), [user, isLoading]);
+  const value = useMemo(() => ({ user, isLoading, login, logout, refreshMe }), [user, isLoading, login, logout, refreshMe]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

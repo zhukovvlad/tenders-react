@@ -202,8 +202,10 @@ export function TenderChaptersPage() {
   }, [fetchTenderChapters]);
 
   const handleCreate = async () => {
-    if (!newChapterTitle.trim() || !selectedTypeId)
-      return alert("Название и тип должны быть выбраны.");
+    if (!newChapterTitle.trim() || !selectedTypeId) {
+      setError("Название и тип должны быть выбраны.");
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
     try {

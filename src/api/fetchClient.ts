@@ -21,6 +21,13 @@ function isUnsafeMethod(method?: string): boolean {
   return m === "POST" || m === "PUT" || m === "PATCH" || m === "DELETE";
 }
 
+function applyCsrfHeader(headers: Headers, method: string): void {
+  if (typeof window !== "undefined" && isUnsafeMethod(method)) {
+    const csrf = getCookie(CSRF_COOKIE);
+    if (csrf) headers.set(CSRF_HEADER, csrf);
+  }
+}
+
 async function refreshSession(apiBaseUrl = ""): Promise<boolean> {
   const res = await fetch(`${apiBaseUrl}/api/v1/auth/refresh`, {
     method: "POST",
@@ -32,7 +39,7 @@ async function refreshSession(apiBaseUrl = ""): Promise<boolean> {
 export async function apiFetch(
   path: string,
   init: FetchOptions = {},
-  apiBaseUrl = import.meta.env.VITE_API_URL || ""
+  apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ""
 ): Promise<Response> {
   const headers = new Headers(init.headers || {});
   const method = (init.method || "GET").toUpperCase();
@@ -44,10 +51,7 @@ export async function apiFetch(
     headers,
   };
 
-  if (typeof window !== "undefined" && isUnsafeMethod(method)) {
-    const csrf = getCookie(CSRF_COOKIE);
-    if (csrf) headers.set(CSRF_HEADER, csrf);
-  }
+  applyCsrfHeader(headers, method);
 
   const res = await fetch(`${apiBaseUrl}${path}`, finalInit);
 
@@ -62,10 +66,7 @@ export async function apiFetch(
     const retryHeaders = new Headers(finalInit.headers || {});
     const retryInit: FetchOptions = { ...finalInit, _retried: true, headers: retryHeaders };
 
-    if (typeof window !== "undefined" && isUnsafeMethod(method)) {
-      const csrf = getCookie(CSRF_COOKIE);
-      if (csrf) retryHeaders.set(CSRF_HEADER, csrf);
-    }
+    applyCsrfHeader(retryHeaders, method);
 
     return fetch(`${apiBaseUrl}${path}`, retryInit);
   }
