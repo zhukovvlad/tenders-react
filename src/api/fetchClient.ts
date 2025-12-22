@@ -29,11 +29,24 @@ function applyCsrfHeader(headers: Headers, method: string): void {
 }
 
 async function refreshSession(apiBaseUrl = ""): Promise<boolean> {
-  const res = await fetch(`${apiBaseUrl}/api/v1/auth/refresh`, {
-    method: "POST",
-    credentials: "include",
-  });
-  return res.ok;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const res = await fetch(`${apiBaseUrl}/api/v1/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      signal: controller.signal,
+    });
+    return res.ok;
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("Session refresh timeout");
+    }
+    return false;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 export async function apiFetch(

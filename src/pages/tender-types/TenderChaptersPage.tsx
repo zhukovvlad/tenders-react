@@ -269,7 +269,8 @@ export function TenderChaptersPage() {
         { method: "DELETE" }
       );
       if (!response.ok) throw new Error("Ошибка удаления на сервере");
-    } catch {
+    } catch (e) {
+      console.error("Failed to delete chapter:", e);
       setError("Не удалось удалить раздел. Восстанавливаем список.");
       setChapters(originalChapters);
     }
@@ -325,7 +326,7 @@ export function TenderChaptersPage() {
           <div className="flex gap-2 justify-end">
             <Button
               onClick={handleCreate}
-              disabled={isSubmitting || !newChapterTitle || !selectedTypeId}
+              disabled={isSubmitting || !newChapterTitle.trim() || !selectedTypeId}
             >
               {isSubmitting && (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
