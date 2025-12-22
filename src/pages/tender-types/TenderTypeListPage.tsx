@@ -17,6 +17,7 @@ import { toast } from "sonner";
 
 import { TenderTypeActions } from "@/components/actions/TenderTypeActions";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
+import { apiFetch } from "@/api/fetchClient";
 
 // Интерфейс для одного типа тендера (соответствует sqlc-модели TenderType)
 interface TenderType {
@@ -39,7 +40,7 @@ export default function TenderTypeListPage() {
   useEffect(() => {
     const fetchTenderTypes = async () => {
       try {
-        const response = await fetch(
+        const response = await apiFetch(
           `${buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES)}?page_size=100`
         ); // Загрузим до 100 типов
         if (!response.ok) {
@@ -74,7 +75,7 @@ export default function TenderTypeListPage() {
     setError(null);
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES),
         {
           method: "POST",
@@ -106,7 +107,7 @@ export default function TenderTypeListPage() {
   // --- НОВЫЕ ФУНКЦИИ ДЛЯ UPDATE и DELETE ---
   const handleUpdateType = async (id: number, newTitle: string) => {
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES, id),
         {
           method: "PUT",
@@ -128,7 +129,7 @@ export default function TenderTypeListPage() {
 
   const handleDeleteType = async (id: number) => {
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         buildApiUrl(API_CONFIG.ENDPOINTS.TENDER_TYPES, id),
         {
           method: "DELETE",
