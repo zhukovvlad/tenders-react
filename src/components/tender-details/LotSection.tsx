@@ -40,19 +40,13 @@ export function LotSection({ lot }: LotSectionProps) {
                   ? winnerRankMap.get(proposal.id) 
                   : undefined;
                 
-                // Преобразуем базовый Proposal в формат для ProposalCard
-                const cardProposal = {
-                  proposal_id: proposal.id,
-                  contractor_id: 0, // Не используется в базовой карточке
-                  contractor_title: proposal.contractor_name,
-                  contractor_inn: proposal.contractor_inn,
-                  is_winner: proposal.is_winner,
+                // Обогащаем proposal данными о ранке победителя
+                const enrichedProposal = {
+                  ...proposal,
                   winner_rank: winnerRank,
-                  total_cost: proposal.total_cost,
-                  additional_info: proposal.additional_info || null,
                 };
                 
-                return <ProposalCard key={proposal.id} proposal={cardProposal} />;
+                return <ProposalCard key={proposal.id} proposal={enrichedProposal} />;
               })}
             </div>
           ) : (

@@ -7,18 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Award, Calendar, MoreVertical, Pencil, Percent, Trash2 } from "lucide-react";
 import { UI_TEXT } from "@/constants/messages";
-
-// Интерфейс для данных одного предложения
-export interface Proposal {
-  proposal_id: number;
-  contractor_id: number;
-  contractor_title: string;
-  contractor_inn: string;
-  is_winner: boolean;
-  winner_rank?: number;
-  total_cost: number | null;
-  additional_info: Record<string, string | null> | null;
-}
+import type { Proposal } from "@/types/tender";
 
 interface ProposalCardProps {
   proposal: Proposal;
@@ -46,12 +35,12 @@ const displayNullableValue = (value: string | null, suffix = "") => {
 };
 
 export function ProposalCard({ proposal }: ProposalCardProps) {
-  const advancePayment = findValueByKeyPrefix(proposal.additional_info, 'Аванс');
-  const completionTime = findValueByKeyPrefix(proposal.additional_info, 'Срок');
+  const advancePayment = findValueByKeyPrefix(proposal.additional_info ?? null, 'Аванс');
+  const completionTime = findValueByKeyPrefix(proposal.additional_info ?? null, 'Срок выполнения');
 
   const isFirstPlace = proposal.is_winner && proposal.winner_rank === 1;
-  const isSecondPlace = proposal.is_winner && proposal.winner_rank === 2;
-
+  const isSecondPlace = proposal.is_winner && proposal.winner_rank === 2;  
+  const contractorName = proposal.contractor_name || UI_TEXT.NOT_AVAILABLE;
   const cardBorderStyle = isFirstPlace
     ? 'border-2 border-green-400 dark:border-green-600'
     : isSecondPlace
@@ -78,7 +67,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
               <Award className="mr-2 h-4 w-4" /> Победитель
             </Badge>
           )}
-          <CardTitle>{proposal.contractor_title}</CardTitle>
+          <CardTitle>{contractorName}</CardTitle>
           <CardDescription>ИНН: {proposal.contractor_inn}</CardDescription>
         </div>
         <DropdownMenu>

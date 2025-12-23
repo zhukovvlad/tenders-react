@@ -121,6 +121,7 @@ function WinnerCard({ winner, onDelete }: { winner: Winner; onDelete: () => void
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{winner.price} ₽</span>
+            <span className="text-xs">ИНН: {winner.inn}</span>
             {winner.notes && <span className="text-xs italic">Примечание: {winner.notes}</span>}
           </div>
         </div>
