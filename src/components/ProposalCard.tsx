@@ -47,17 +47,17 @@ const displayNullableValue = (value: string | null, suffix = "") => {
 
 export function ProposalCard({ proposal }: ProposalCardProps) {
   const advancePayment = findValueByKeyPrefix(proposal.additional_info, 'Аванс');
-  const completionTime = findValueByKeyPrefix(proposal.additional_info, 'Срок выполнения');
+  const completionTime = findValueByKeyPrefix(proposal.additional_info, 'Срок');
 
   const isFirstPlace = proposal.is_winner && proposal.winner_rank === 1;
   const isSecondPlace = proposal.is_winner && proposal.winner_rank === 2;
 
   const cardBorderStyle = isFirstPlace
-    ? 'border-green-500 border-2'
+    ? 'border-2 border-green-400 dark:border-green-600'
     : isSecondPlace
-    ? 'border-amber-500 border-2'
+    ? 'border-2 border-amber-400 dark:border-amber-600'
     : proposal.is_winner
-    ? 'border-gray-400 border-2'
+    ? 'border-2 border-gray-400'
     : '';
 
   return (
