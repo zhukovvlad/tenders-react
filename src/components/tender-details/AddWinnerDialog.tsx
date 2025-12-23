@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import type { CreateWinnerRequest } from "@/types/tender";
-import type { Proposal } from "@/components/ProposalCard";
+import type { CreateWinnerRequest, Proposal } from "@/types/tender";
 import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
@@ -138,13 +137,13 @@ export function AddWinnerDialog({
                 </SelectTrigger>
                 <SelectContent className="max-w-sm">
                   {proposals.map((proposal) => {
-                    const displayText = `${proposal.contractor_title}${
+                    const displayText = `${proposal.contractor_name}${
                       proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
                     }`;
                     return (
                       <SelectItem
-                        key={proposal.proposal_id}
-                        value={proposal.proposal_id.toString()}
+                        key={proposal.id}
+                        value={proposal.id.toString()}
                         title={displayText}
                       >
                         <div className="truncate max-w-[280px]">

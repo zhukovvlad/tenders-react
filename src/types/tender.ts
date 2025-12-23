@@ -22,6 +22,16 @@ export interface TenderDetails {
   type_title: NullableString;
 }
 
+export interface Proposal {
+  id: number;
+  contractor_name: string;
+  contractor_inn: string;
+  total_cost: number | null;
+  is_winner: boolean;
+  winner_rank?: number;
+  additional_info?: Record<string, string | null> | null;
+}
+
 export interface Lot {
   id: number
   lot_key: string
@@ -29,8 +39,9 @@ export interface Lot {
   tender_id: number
   created_at: string
   updated_at: string
-  key_parameters?: Record<string, string> // 👈 вот это важно
+  key_parameters?: Record<string, string>
   winners?: Winner[]
+  proposals?: Proposal[]
 }
 
 export interface TenderPageData {

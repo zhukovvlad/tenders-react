@@ -1,7 +1,8 @@
 // src/components/ProposalsList.tsx
 
 import { useEffect, useState } from "react";
-import { ProposalCard, type Proposal } from "./ProposalCard";
+import { ProposalCard } from "./ProposalCard";
+import type { Proposal } from "@/types/tender";
 import { buildApiUrl, API_CONFIG } from "@/config/api";
 import { apiFetch } from "@/api/fetchClient";
 
@@ -41,8 +42,8 @@ export function ProposalsList({ lotId }: { lotId: number }) {
       {proposals.length > 0 ? (
         proposals.map((proposal) => (
           // Здесь мы пока не передаем onUpdate/onDelete, т.к. не реализовали их
-          <ProposalCard 
-            key={proposal.proposal_id} 
+          <ProposalCard
+            key={proposal.id}
             proposal={proposal}
             // onUpdate={handleUpdateProposal}
             // onDelete={handleDeleteProposal}
