@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Award, Calendar, MoreVertical, Pencil, Percent, Trash2 } from "lucide-react";
 import { UI_TEXT } from "@/constants/messages";
 import type { Proposal } from "@/types/tender";
+import { findValueByKeyPrefix } from "@/lib/utils";
 
 interface ProposalCardProps {
   proposal: Proposal;
@@ -20,13 +21,6 @@ interface ProposalCardProps {
 const formatCurrency = (value: number | null) => {
   if (value == null) return UI_TEXT.NOT_AVAILABLE;
   return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 2 }).format(value);
-};
-
-const findValueByKeyPrefix = (data: Record<string, string | null> | null, prefix: string): string | null => {
-  if (!data) return null;
-  const lowerCasePrefix = prefix.toLowerCase();
-  const key = Object.keys(data).find(k => k.trim().toLowerCase().startsWith(lowerCasePrefix));
-  return key ? data[key] : null;
 };
 
 const displayNullableValue = (value: string | null, suffix = "") => {
