@@ -15,6 +15,7 @@ export interface Proposal {
   contractor_title: string;
   contractor_inn: string;
   is_winner: boolean;
+  winner_rank?: number;
   total_cost: number | null;
   additional_info: Record<string, string | null> | null;
 }
@@ -48,13 +49,33 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
   const advancePayment = findValueByKeyPrefix(proposal.additional_info, 'Аванс');
   const completionTime = findValueByKeyPrefix(proposal.additional_info, 'Срок выполнения');
 
+  const isFirstPlace = proposal.is_winner && proposal.winner_rank === 1;
+  const isSecondPlace = proposal.is_winner && proposal.winner_rank === 2;
+
+  const cardBorderStyle = isFirstPlace
+    ? 'border-green-500 border-2'
+    : isSecondPlace
+    ? 'border-amber-500 border-2'
+    : proposal.is_winner
+    ? 'border-gray-400 border-2'
+    : '';
+
   return (
-    <Card className={`w-full flex flex-col ${proposal.is_winner ? 'border-green-500 border-2' : ''}`}>
+    <Card className={`w-full flex flex-col ${cardBorderStyle}`}>
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
           {proposal.is_winner && (
-            <Badge variant="secondary" className="w-fit bg-green-100 text-green-800 border-green-300 mb-2">
-                <Award className="mr-2 h-4 w-4" /> Победитель
+            <Badge 
+              variant="secondary" 
+              className={`w-fit mb-2 ${
+                isFirstPlace
+                  ? 'bg-green-100 text-green-800 border-green-300'
+                  : isSecondPlace
+                  ? 'bg-amber-100 text-amber-800 border-amber-300'
+                  : 'bg-gray-100 text-gray-800 border-gray-300'
+              }`}
+            >
+              <Award className="mr-2 h-4 w-4" /> Победитель
             </Badge>
           )}
           <CardTitle>{proposal.contractor_title}</CardTitle>

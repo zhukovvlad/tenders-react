@@ -9,6 +9,7 @@ import { useTenderData } from "@/hooks/useTenderData";
 import { TenderPageHeader } from "@/components/tender-details/TenderPageHeader";
 import { TenderInfoBlock } from "@/components/tender-details/TenderInfoBlock";
 import { LotSection } from "@/components/tender-details/LotSection";
+import { TenderWinnersSection } from "@/components/tender-details/TenderWinnersSection";
 
 const TenderPageSkeleton = () => (
   <div className="p-4">
@@ -49,6 +50,13 @@ export function TenderDetailPage() {
 
       <div className="mt-2 mb-6">
         <TenderCategoryManager tender={tender} onUpdate={fetchTenderPageData} />
+      </div>
+
+      <Separator />
+
+      {/* Секция с победителями */}
+      <div className="mt-6 mb-6">
+        <TenderWinnersSection lots={lots} onUpdate={fetchTenderPageData} />
       </div>
 
       <Separator />
