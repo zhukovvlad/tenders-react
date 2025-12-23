@@ -30,6 +30,7 @@ export interface Lot {
   created_at: string
   updated_at: string
   key_parameters?: Record<string, string> // 👈 вот это важно
+  winners?: Winner[]
 }
 
 export interface TenderPageData {
@@ -54,4 +55,20 @@ export interface TenderChapter {
 export interface TenderType {
   id: number;
   title: string;
+}
+
+export interface Winner {
+  id: number;
+  contractor_name: string;
+  inn: string;
+  price: string;
+  rank: number;
+  proposal_id?: number;
+  notes?: string;
+}
+
+export interface CreateWinnerRequest {
+  proposal_id: number;
+  rank: number;
+  notes?: string;
 }
