@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Award, Calendar, MoreVertical, Pencil, Percent, Trash2 } from "lucide-react";
+import { Award, Calendar, MoreVertical, Pencil, Percent, Trash2, Eye } from "lucide-react";
 import { UI_TEXT } from "@/constants/messages";
 import type { Proposal } from "@/types/tender";
 import { findValueByKeyPrefix } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface ProposalCardProps {
   proposal: Proposal;
@@ -29,6 +30,7 @@ const displayNullableValue = (value: string | null, suffix = "") => {
 };
 
 export function ProposalCard({ proposal }: ProposalCardProps) {
+  const navigate = useNavigate();
   const advancePayment = findValueByKeyPrefix(proposal.additional_info ?? null, 'Аванс');
   const completionTime = findValueByKeyPrefix(proposal.additional_info ?? null, 'Срок выполнения');
 
@@ -102,7 +104,14 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full">Смотреть детализацию</Button>
+        <Button 
+          variant="outline" 
+          className="w-full"
+          onClick={() => navigate(`/proposals/${proposal.id}`)}
+        >
+          <Eye className="mr-2 h-4 w-4" />
+          Смотреть детализацию
+        </Button>
       </CardFooter>
     </Card>
   );

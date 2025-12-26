@@ -115,7 +115,7 @@ src/
 - Избегать встраивания объектов в JSX (выносить в переменные)
 
 ### Именование
-- Компоненты: PascalCase (`TenderCard`)
+- Компоненты: PascalCase (`ProposalCard`)
 - Функции и переменные: camelCase (`fetchTenderData`)
 - Константы: UPPER_SNAKE_CASE (`API_BASE_URL`)
 - Файлы: kebab-case для утилит, PascalCase для компонентов
