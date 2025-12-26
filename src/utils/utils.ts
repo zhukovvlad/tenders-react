@@ -1,7 +1,7 @@
 import type { NullableString } from "@/types/tender";
 
 // Вспомогательная функция для безопасного отображения nullable-строк из Go
-export const displayNullableString = (value: NullableString | undefined, fallback: string = "–") => {
+export const displayNullableString = (value: NullableString | undefined, fallback: string = "—") => {
   return value && value.Valid ? value.String : fallback;
 };
 
@@ -22,7 +22,8 @@ export const formatCurrency = (value: string | number | null | undefined) => {
 };
 
 /**
- * Форматирование числа как валюты без символа (для таблиц)
+ * Форматирование числа с разделителями тысяч в русской локали (без символа валюты, для таблиц)
+ * Числа >= 1000 отображаются без десятичных знаков
  */
 export const formatDecimal = (value: string | number | undefined | null) => {
   if (value == null || value === "") return "—";

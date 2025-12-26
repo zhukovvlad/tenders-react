@@ -12,10 +12,10 @@ import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
 import { formatNullableCurrency } from '@/utils/utils';
 
-// Константы для ключей итоговых сумм
+// Константы для итоговой суммы: ключ для backend и человеко-читаемая подпись
 const SUMMARY_KEYS = {
-  TOTAL_WITH_VAT: 'total_cost_with_vat',
-  TOTAL_WITH_VAT_RU: 'Итого с НДС',
+  TOTAL_WITH_VAT: 'total_cost_with_vat',  // ключ поля в данных / backend
+  TOTAL_WITH_VAT_RU: 'Итого с НДС',         // текстовая подпись для отображения
 } as const;
 
 export const ProposalPage: React.FC = () => {
@@ -28,7 +28,8 @@ export const ProposalPage: React.FC = () => {
   useEffect(() => {
     const fetchProposalDetails = async () => {
       if (!id) {
-        setError("ID предложения не указан");
+        // Этот случай не должен происходить из-за роутинга React Router
+        console.error("Невалидный ID предложения");
         setLoading(false);
         return;
       }
@@ -40,7 +41,10 @@ export const ProposalPage: React.FC = () => {
         const proposalData = await getProposalDetails(parseInt(id, 10));
         setData(proposalData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Произошла неизвестная ошибка");
+        const errorMessage = err instanceof Error && err.message 
+          ? err.message 
+          : "Произошла неизвестная ошибка";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

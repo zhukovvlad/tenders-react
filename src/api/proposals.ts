@@ -71,13 +71,13 @@ export async function createProposal(lotId: number, data: Partial<Proposal>): Pr
 }
 
 /**
- * Обновить существующее предложение
+ * Обновить существующее предложение (частичное обновление)
  */
 export async function updateProposal(proposalId: number, data: Partial<Proposal>): Promise<Proposal> {
   const response = await apiFetch(
     `${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.PROPOSALS}/${proposalId}`,
     {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }
