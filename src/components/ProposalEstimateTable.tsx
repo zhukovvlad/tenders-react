@@ -59,7 +59,6 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                   {item.number}
                 </TableCell>
                 
-                {/* --- ЯЧЕЙКА С НАЗВАНИЕМ (ИСПРАВЛЕНО) --- */}
                 <TableCell className="px-2 py-3 align-top">
                   <div className="flex flex-col gap-1.5 min-w-0 w-full max-w-full">
                     

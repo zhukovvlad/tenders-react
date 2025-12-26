@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
-import { formatCurrency, displayNullableString } from '@/utils/utils';
+import { formatNullableCurrency } from '@/utils/utils';
 
 // Константы для ключей итоговых сумм
 const SUMMARY_KEYS = {
@@ -131,7 +131,7 @@ export const ProposalPage: React.FC = () => {
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Итого по смете:</p>
               <p className="text-3xl font-bold text-primary mt-1">
-                {totalWithVat ? formatCurrency(displayNullableString(totalWithVat.total_cost, "") || null) : "—"}
+                {totalWithVat ? formatNullableCurrency(totalWithVat.total_cost) : "—"}
               </p>
             </div>
           </div>
@@ -173,7 +173,7 @@ export const ProposalPage: React.FC = () => {
                           {summary.job_title || summary.summary_key}
                         </span>
                         <span className="text-sm font-semibold">
-                          {formatCurrency(displayNullableString(summary.total_cost, "") || null)}
+                          {formatNullableCurrency(summary.total_cost)}
                         </span>
                       </div>
                       {showDetails && (
@@ -181,13 +181,13 @@ export const ProposalPage: React.FC = () => {
                           {hasMaterials && (
                             <div className="flex justify-between">
                               <span>• Материалы:</span>
-                              <span>{formatCurrency(displayNullableString(summary.materials_cost, "") || null)}</span>
+                              <span>{formatNullableCurrency(summary.materials_cost)}</span>
                             </div>
                           )}
                           {hasWorks && (
                             <div className="flex justify-between">
                               <span>• Работы:</span>
-                              <span>{formatCurrency(displayNullableString(summary.works_cost, "") || null)}</span>
+                              <span>{formatNullableCurrency(summary.works_cost)}</span>
                             </div>
                           )}
                         </div>

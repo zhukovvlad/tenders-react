@@ -4,6 +4,22 @@ import type { ProposalFullDetails } from "@/types/proposal";
 import type { Proposal } from "@/types/tender";
 
 /**
+ * Обработка ошибок API с парсингом тела ответа
+ */
+async function handleApiError(response: Response, baseMessage: string): Promise<never> {
+  let errorMessage = `${baseMessage}: ${response.statusText}`;
+  try {
+    const errorData = await response.json();
+    if (errorData?.message) {
+      errorMessage += ` - ${errorData.message}`;
+    }
+  } catch {
+    // If response body is not JSON, use statusText only
+  }
+  throw new Error(errorMessage);
+}
+
+/**
  * Получить список предложений для конкретного лота
  */
 export async function getProposalsByLot(lotId: number): Promise<Proposal[]> {
@@ -12,16 +28,7 @@ export async function getProposalsByLot(lotId: number): Promise<Proposal[]> {
   );
   
   if (!response.ok) {
-    let errorMessage = `Не удалось загрузить предложения для лота ${lotId}: ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        errorMessage += ` - ${errorData.message}`;
-      }
-    } catch {
-      // If response body is not JSON, use statusText only
-    }
-    throw new Error(errorMessage);
+    await handleApiError(response, `Не удалось загрузить предложения для лота ${lotId}`);
   }
   
   return response.json();
@@ -36,16 +43,7 @@ export async function getProposalDetails(proposalId: number): Promise<ProposalFu
   );
   
   if (!response.ok) {
-    let errorMessage = `Не удалось загрузить детали предложения ${proposalId}: ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        errorMessage += ` - ${errorData.message}`;
-      }
-    } catch {
-      // If response body is not JSON, use statusText only
-    }
-    throw new Error(errorMessage);
+    await handleApiError(response, `Не удалось загрузить детали предложения ${proposalId}`);
   }
   
   return response.json();
@@ -65,16 +63,7 @@ export async function createProposal(lotId: number, data: Partial<Proposal>): Pr
   );
   
   if (!response.ok) {
-    let errorMessage = `Не удалось создать предложение для лота ${lotId}: ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        errorMessage += ` - ${errorData.message}`;
-      }
-    } catch {
-      // If response body is not JSON, use statusText only
-    }
-    throw new Error(errorMessage);
+    await handleApiError(response, `Не удалось создать предложение для лота ${lotId}`);
   }
   
   return response.json();
@@ -94,16 +83,7 @@ export async function updateProposal(proposalId: number, data: Partial<Proposal>
   );
   
   if (!response.ok) {
-    let errorMessage = `Не удалось обновить предложение ${proposalId}: ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        errorMessage += ` - ${errorData.message}`;
-      }
-    } catch {
-      // If response body is not JSON, use statusText only
-    }
-    throw new Error(errorMessage);
+    await handleApiError(response, `Не удалось обновить предложение ${proposalId}`);
   }
   
   return response.json();
@@ -121,15 +101,6 @@ export async function deleteProposal(proposalId: number): Promise<void> {
   );
   
   if (!response.ok) {
-    let errorMessage = `Не удалось удалить предложение ${proposalId}: ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        errorMessage += ` - ${errorData.message}`;
-      }
-    } catch {
-      // If response body is not JSON, use statusText only
-    }
-    throw new Error(errorMessage);
+    await handleApiError(response, `Не удалось удалить предложение ${proposalId}`);
   }
 }

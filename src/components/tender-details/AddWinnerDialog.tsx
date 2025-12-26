@@ -153,20 +153,16 @@ export function AddWinnerDialog({
                   <SelectValue placeholder="Выберите участника" />
                 </SelectTrigger>
                 <SelectContent className="max-w-sm">
-                  {proposals
-                    .filter((proposal): proposal is Proposal & { id: number } => 
-                      proposal.id !== undefined && proposal.id !== null
-                    )
-                    .map((proposal) => {
-                      const displayText = `${proposal.contractor_name}${
-                        proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
-                      }`;
-                      return (
-                        <SelectItem
-                          key={proposal.id}
-                          value={proposal.id.toString()}
-                          title={displayText}
-                        >
+                  {proposals.map((proposal) => {
+                    const displayText = `${proposal.contractor_name}${
+                      proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
+                    }`;
+                    return (
+                      <SelectItem
+                        key={proposal.id}
+                        value={proposal.id.toString()}
+                        title={displayText}
+                      >
                           <div className="truncate max-w-[280px]">
                             {displayText}
                           </div>

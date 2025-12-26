@@ -25,7 +25,7 @@ export const formatCurrency = (value: string | number | null | undefined) => {
  * Форматирование числа как валюты без символа (для таблиц)
  */
 export const formatDecimal = (value: string | undefined | null) => {
-  if (!value) return "-";
+  if (!value) return "—";
   const num = parseFloat(value);
   if (isNaN(num)) return "—";
   
@@ -42,4 +42,13 @@ export const formatDecimal = (value: string | undefined | null) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(num);
+};
+
+/**
+ * Форматирование nullable поля как валюту
+ * Упрощает работу с nullable полями из Go backend
+ */
+export const formatNullableCurrency = (field: NullableString | undefined) => {
+  const value = displayNullableString(field, "");
+  return formatCurrency(value || null);
 };
