@@ -10,20 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
-
-// Утилита для форматирования валюты
-const formatCurrency = (value: string | number | null | undefined) => {
-  if (value == null || value === "") return "—";
-  const num = typeof value === 'string' ? parseFloat(value) : value;
-  if (isNaN(num)) return "—";
-  
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(num);
-};
+import { formatCurrency } from '@/utils/utils';
 
 export const ProposalPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -179,7 +166,7 @@ export const ProposalPage: React.FC = () => {
                   const showDetails = hasMaterials || hasWorks;
                   
                   return (
-                    <div key={idx}>
+                    <div key={summary.id}>
                       <div className="flex justify-between items-baseline">
                         <span className="text-sm text-muted-foreground">
                           {summary.job_title || summary.summary_key}

@@ -10,26 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
 import type { ProposalPosition } from "@/types/proposal";
-
-const formatCurrency = (value: string | undefined | null) => {
-  if (!value) return "-";
-  const num = parseFloat(value);
-  if (isNaN(num)) return value;
-  
-  if (num >= 1000) {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(num);
-  }
-  
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'decimal',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(num);
-};
+import { formatDecimal } from "@/utils/utils";
 
 interface Props {
   positions: ProposalPosition[];
@@ -66,7 +47,7 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                     {item.title}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-right font-bold text-foreground align-middle text-sm whitespace-nowrap tabular-nums">
-                    {formatCurrency(item.cost_total)}
+                    {formatDecimal(item.cost_total)}
                   </TableCell>
                 </TableRow>
               );
@@ -97,7 +78,7 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                     <div className="sm:hidden text-[10px] text-muted-foreground flex gap-2">
                          <span>{item.quantity} {item.unit}</span>
                          <span className="opacity-50">|</span>
-                         <span>{formatCurrency(item.cost_total)} ₽</span>
+                         <span>{formatDecimal(item.cost_total)} ₽</span>
                     </div>
 
                     {item.comment_contractor && (
@@ -119,10 +100,10 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                   {item.quantity}
                 </TableCell>
                 <TableCell className="px-2 py-3 text-right text-xs text-muted-foreground align-top tabular-nums whitespace-nowrap hidden md:table-cell">
-                  {formatCurrency(item.price_total)}
+                  {formatDecimal(item.price_total)}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-right text-xs font-bold text-foreground align-top tabular-nums whitespace-nowrap">
-                  {formatCurrency(item.cost_total)}
+                  {formatDecimal(item.cost_total)}
                 </TableCell>
               </TableRow>
             );

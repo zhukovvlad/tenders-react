@@ -1,10 +1,6 @@
 // frontend/src/types/proposal.ts
 
-// Nullable field structure from Go backend
-interface NullableString {
-  String: string;
-  Valid: boolean;
-}
+import type { NullableString } from './tender';
 
 export interface ProposalMeta {
   id: number;

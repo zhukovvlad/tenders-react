@@ -24,6 +24,7 @@ export const API_CONFIG = {
     TENDER_CATEGORIES: "/tender-categories",
     TENDER_TYPES: "/tender-types",
     LOTS: "/lots",
+    PROPOSALS: "/proposals",
   },
 } as const;
 

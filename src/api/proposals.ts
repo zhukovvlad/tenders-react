@@ -12,7 +12,16 @@ export async function getProposalsByLot(lotId: number): Promise<Proposal[]> {
   );
   
   if (!response.ok) {
-    throw new Error(`Не удалось загрузить предложения: ${response.statusText}`);
+    let errorMessage = `Не удалось загрузить предложения для лота ${lotId}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      if (errorData?.message) {
+        errorMessage += ` - ${errorData.message}`;
+      }
+    } catch {
+      // If response body is not JSON, use statusText only
+    }
+    throw new Error(errorMessage);
   }
   
   return response.json();
@@ -23,11 +32,20 @@ export async function getProposalsByLot(lotId: number): Promise<Proposal[]> {
  */
 export async function getProposalDetails(proposalId: number): Promise<ProposalFullDetails> {
   const response = await apiFetch(
-    `${API_CONFIG.API_BASE}/proposals/${proposalId}/details`
+    `${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.PROPOSALS}/${proposalId}/details`
   );
   
   if (!response.ok) {
-    throw new Error(`Не удалось загрузить детали предложения: ${response.statusText}`);
+    let errorMessage = `Не удалось загрузить детали предложения ${proposalId}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      if (errorData?.message) {
+        errorMessage += ` - ${errorData.message}`;
+      }
+    } catch {
+      // If response body is not JSON, use statusText only
+    }
+    throw new Error(errorMessage);
   }
   
   return response.json();
@@ -47,7 +65,16 @@ export async function createProposal(lotId: number, data: Partial<Proposal>): Pr
   );
   
   if (!response.ok) {
-    throw new Error(`Не удалось создать предложение: ${response.statusText}`);
+    let errorMessage = `Не удалось создать предложение для лота ${lotId}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      if (errorData?.message) {
+        errorMessage += ` - ${errorData.message}`;
+      }
+    } catch {
+      // If response body is not JSON, use statusText only
+    }
+    throw new Error(errorMessage);
   }
   
   return response.json();
@@ -58,7 +85,7 @@ export async function createProposal(lotId: number, data: Partial<Proposal>): Pr
  */
 export async function updateProposal(proposalId: number, data: Partial<Proposal>): Promise<Proposal> {
   const response = await apiFetch(
-    `${API_CONFIG.API_BASE}/proposals/${proposalId}`,
+    `${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.PROPOSALS}/${proposalId}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -67,7 +94,16 @@ export async function updateProposal(proposalId: number, data: Partial<Proposal>
   );
   
   if (!response.ok) {
-    throw new Error(`Не удалось обновить предложение: ${response.statusText}`);
+    let errorMessage = `Не удалось обновить предложение ${proposalId}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      if (errorData?.message) {
+        errorMessage += ` - ${errorData.message}`;
+      }
+    } catch {
+      // If response body is not JSON, use statusText only
+    }
+    throw new Error(errorMessage);
   }
   
   return response.json();
@@ -78,13 +114,22 @@ export async function updateProposal(proposalId: number, data: Partial<Proposal>
  */
 export async function deleteProposal(proposalId: number): Promise<void> {
   const response = await apiFetch(
-    `${API_CONFIG.API_BASE}/proposals/${proposalId}`,
+    `${API_CONFIG.API_BASE}${API_CONFIG.ENDPOINTS.PROPOSALS}/${proposalId}`,
     {
       method: "DELETE",
     }
   );
   
   if (!response.ok) {
-    throw new Error(`Не удалось удалить предложение: ${response.statusText}`);
+    let errorMessage = `Не удалось удалить предложение ${proposalId}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      if (errorData?.message) {
+        errorMessage += ` - ${errorData.message}`;
+      }
+    } catch {
+      // If response body is not JSON, use statusText only
+    }
+    throw new Error(errorMessage);
   }
 }
