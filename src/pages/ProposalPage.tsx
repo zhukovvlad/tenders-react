@@ -10,7 +10,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
-import { formatCurrency } from '@/utils/utils';
+import { formatCurrency, displayNullableString } from '@/utils/utils';
+
+// Константы для ключей итоговых сумм
+const SUMMARY_KEYS = {
+  TOTAL_WITH_VAT: 'total_cost_with_vat',
+  TOTAL_WITH_VAT_RU: 'Итого с НДС',
+} as const;
 
 export const ProposalPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -78,14 +84,9 @@ export const ProposalPage: React.FC = () => {
 
   // Поиск итоговой суммы с НДС
   const totalWithVat = data.summaries.find(s => 
-    s.summary_key === 'total_cost_with_vat' || 
-    s.summary_key === 'Итого с НДС'
+    s.summary_key === SUMMARY_KEYS.TOTAL_WITH_VAT || 
+    s.summary_key === SUMMARY_KEYS.TOTAL_WITH_VAT_RU
   );
-  
-  // Вспомогательная функция для извлечения значения из nullable поля
-  const getNullableValue = (field: { String: string; Valid: boolean } | undefined) => {
-    return field && field.Valid ? field.String : null;
-  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -130,7 +131,7 @@ export const ProposalPage: React.FC = () => {
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Итого по смете:</p>
               <p className="text-3xl font-bold text-primary mt-1">
-                {totalWithVat ? formatCurrency(getNullableValue(totalWithVat.total_cost)) : "—"}
+                {totalWithVat ? formatCurrency(displayNullableString(totalWithVat.total_cost, "") || null) : "—"}
               </p>
             </div>
           </div>
@@ -172,7 +173,7 @@ export const ProposalPage: React.FC = () => {
                           {summary.job_title || summary.summary_key}
                         </span>
                         <span className="text-sm font-semibold">
-                          {formatCurrency(getNullableValue(summary.total_cost))}
+                          {formatCurrency(displayNullableString(summary.total_cost, "") || null)}
                         </span>
                       </div>
                       {showDetails && (
@@ -180,13 +181,13 @@ export const ProposalPage: React.FC = () => {
                           {hasMaterials && (
                             <div className="flex justify-between">
                               <span>• Материалы:</span>
-                              <span>{formatCurrency(getNullableValue(summary.materials_cost))}</span>
+                              <span>{formatCurrency(displayNullableString(summary.materials_cost, "") || null)}</span>
                             </div>
                           )}
                           {hasWorks && (
                             <div className="flex justify-between">
                               <span>• Работы:</span>
-                              <span>{formatCurrency(getNullableValue(summary.works_cost))}</span>
+                              <span>{formatCurrency(displayNullableString(summary.works_cost, "") || null)}</span>
                             </div>
                           )}
                         </div>

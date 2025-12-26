@@ -154,7 +154,9 @@ export function AddWinnerDialog({
                 </SelectTrigger>
                 <SelectContent className="max-w-sm">
                   {proposals
-                    .filter((proposal) => proposal.id !== undefined && proposal.id !== null)
+                    .filter((proposal): proposal is Proposal & { id: number } => 
+                      proposal.id !== undefined && proposal.id !== null
+                    )
                     .map((proposal) => {
                       const displayText = `${proposal.contractor_name}${
                         proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
@@ -162,7 +164,7 @@ export function AddWinnerDialog({
                       return (
                         <SelectItem
                           key={proposal.id}
-                          value={proposal.id!.toString()}
+                          value={proposal.id.toString()}
                           title={displayText}
                         >
                           <div className="truncate max-w-[280px]">

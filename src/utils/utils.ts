@@ -1,8 +1,8 @@
 import type { NullableString } from "@/types/tender";
 
 // Вспомогательная функция для безопасного отображения nullable-строк из Go
-export const displayNullableString = (value: NullableString | undefined) => {
-  return value && value.Valid ? value.String : "–"; // Возвращаем прочерк, если данных нет
+export const displayNullableString = (value: NullableString | undefined, fallback: string = "–") => {
+  return value && value.Valid ? value.String : fallback;
 };
 
 /**
@@ -27,7 +27,7 @@ export const formatCurrency = (value: string | number | null | undefined) => {
 export const formatDecimal = (value: string | undefined | null) => {
   if (!value) return "-";
   const num = parseFloat(value);
-  if (isNaN(num)) return value;
+  if (isNaN(num)) return "—";
   
   if (num >= 1000) {
     return new Intl.NumberFormat('ru-RU', {
