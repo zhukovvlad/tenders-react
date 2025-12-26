@@ -20,20 +20,8 @@ import {
 } from "@/components/ui/select";
 import { LoaderCircle } from "lucide-react";
 import { WinnerAPI } from "@/api/winners";
-import { buildApiUrl, API_CONFIG } from "@/config/api";
-import { apiFetch } from "@/api/fetchClient";
 import { toast } from "sonner";
-
-// Типизация сырого ответа API для предложений
-interface RawProposalResponse {
-  proposal_id: number;
-  contractor_title: string;
-  contractor_inn: string;
-  total_cost: number | null;
-  is_winner: boolean;
-  winner_rank?: number;
-  additional_info?: Record<string, string | null> | null;
-}
+import { getProposalsByLot } from "@/api/proposals";
 
 interface AddWinnerDialogProps {
   open: boolean;
@@ -62,21 +50,7 @@ export function AddWinnerDialog({
     const fetchProposals = async () => {
       setIsLoading(true);
       try {
-        const response = await apiFetch(
-          `${buildApiUrl(API_CONFIG.ENDPOINTS.LOTS, lotId)}/proposals`
-        );
-        if (!response.ok) throw new Error("Не удалось загрузить предложения");
-        const rawData: RawProposalResponse[] = await response.json();
-        // Явно маппим поля сырого ответа в тип Proposal
-        const data: Proposal[] = rawData.map((p) => ({
-          id: p.proposal_id,
-          contractor_name: p.contractor_title,
-          contractor_inn: p.contractor_inn,
-          total_cost: p.total_cost,
-          is_winner: p.is_winner,
-          winner_rank: p.winner_rank,
-          additional_info: p.additional_info,
-        }));
+        const data = await getProposalsByLot(lotId);
         setProposals(data);
       } catch (error) {
         toast.error("Ошибка при загрузке предложений");

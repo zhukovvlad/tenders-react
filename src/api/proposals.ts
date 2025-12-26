@@ -3,6 +3,17 @@ import { API_CONFIG } from "@/config/api";
 import type { ProposalFullDetails } from "@/types/proposal";
 import type { Proposal } from "@/types/tender";
 
+// Типизация сырого ответа API для предложений
+interface RawProposalResponse {
+  proposal_id: number;
+  contractor_title: string;
+  contractor_inn: string;
+  total_cost: number | null;
+  is_winner: boolean;
+  winner_rank?: number;
+  additional_info?: Record<string, string | null> | null;
+}
+
 /**
  * Обработка ошибок API с парсингом тела ответа
  */
@@ -32,7 +43,18 @@ export async function getProposalsByLot(lotId: number): Promise<Proposal[]> {
     await handleApiError(response, `Не удалось загрузить предложения для лота ${lotId}`);
   }
   
-  return response.json();
+  const rawData: RawProposalResponse[] = await response.json();
+  
+  // Маппинг сырого ответа API в тип Proposal
+  return rawData.map((p) => ({
+    id: p.proposal_id,
+    contractor_name: p.contractor_title,
+    contractor_inn: p.contractor_inn,
+    total_cost: p.total_cost,
+    is_winner: p.is_winner,
+    winner_rank: p.winner_rank,
+    additional_info: p.additional_info,
+  }));
 }
 
 /**
