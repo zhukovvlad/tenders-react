@@ -38,7 +38,12 @@ export const ProposalPage: React.FC = () => {
       setError(null);
 
       try {
-        const proposalData = await getProposalDetails(parseInt(id, 10));
+        const proposalId = parseInt(id, 10);
+        if (isNaN(proposalId)) {
+          setError("Некорректный ID предложения");
+          return;
+        }
+        const proposalData = await getProposalDetails(proposalId);
         setData(proposalData);
       } catch (err) {
         const errorMessage = err instanceof Error && err.message 
