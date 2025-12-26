@@ -167,11 +167,11 @@ export function AddWinnerDialog({
                         value={proposal.id.toString()}
                         title={displayText}
                       >
-                          <div className="truncate max-w-[280px]">
-                            {displayText}
-                          </div>
-                        </SelectItem>
-                      );
+                        <div className="truncate max-w-[280px]">
+                          {displayText}
+                        </div>
+                      </SelectItem>
+                    );
                     })}
                 </SelectContent>
               </Select>

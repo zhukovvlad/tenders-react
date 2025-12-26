@@ -12,10 +12,12 @@ import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '@/utils/utils';
 
-// Константы для итоговой суммы: ключ для backend и человеко-читаемая подпись
+// Константы для итоговой суммы
+// Backend может возвращать summary_key как в snake_case, так и на русском языке
+// в зависимости от источника данных, поэтому проверяем оба варианта
 const SUMMARY_KEYS = {
-  TOTAL_WITH_VAT: 'total_cost_with_vat',  // ключ поля в данных / backend
-  TOTAL_WITH_VAT_RU: 'Итого с НДС',         // текстовая подпись для отображения
+  TOTAL_WITH_VAT: 'total_cost_with_vat',  // snake_case ключ от backend
+  TOTAL_WITH_VAT_RU: 'Итого с НДС',       // русское название для совместимости
 } as const;
 
 export const ProposalPage: React.FC = () => {
@@ -176,7 +178,7 @@ export const ProposalPage: React.FC = () => {
                   const showDetails = hasMaterials || hasWorks;
                   
                   return (
-                    <div key={summary.summary_key + idx}>
+                    <div key={idx}>
                       <div className="flex justify-between items-baseline">
                         <span className="text-sm text-muted-foreground">
                           {summary.job_title || summary.summary_key}
