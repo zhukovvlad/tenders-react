@@ -43,7 +43,10 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                   <TableCell className="px-2 py-3 font-bold text-foreground align-top text-xs">
                     {item.chapter_number_in_proposal || item.number}
                   </TableCell>
-                  <TableCell colSpan={4} className="px-2 py-3 font-bold text-foreground align-middle text-sm break-words whitespace-normal">
+                  <TableCell colSpan={5} className="px-2 py-3 font-bold text-foreground align-middle text-sm break-words whitespace-normal sm:hidden">
+                    {item.title}
+                  </TableCell>
+                  <TableCell colSpan={4} className="px-2 py-3 font-bold text-foreground align-middle text-sm break-words whitespace-normal hidden sm:table-cell">
                     {item.title}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-right font-bold text-foreground align-middle text-sm whitespace-nowrap tabular-nums">
@@ -79,7 +82,7 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                     <div className="sm:hidden text-[10px] text-muted-foreground flex gap-2">
                          <span>{item.quantity} {item.unit}</span>
                          <span className="opacity-50">|</span>
-                         <span>{formatDecimal(item.cost_total)}</span>
+                         <span className="tabular-nums">{formatDecimal(item.cost_total)}</span>
                     </div>
 
                     {item.comment_contractor && (

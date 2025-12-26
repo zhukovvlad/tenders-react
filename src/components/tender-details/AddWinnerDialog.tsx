@@ -67,11 +67,15 @@ export function AddWinnerDialog({
         );
         if (!response.ok) throw new Error("Не удалось загрузить предложения");
         const rawData: RawProposalResponse[] = await response.json();
-        // Маппим proposal_id в id для совместимости с типом Proposal
-        const data: Proposal[] = rawData.map(p => ({
-          ...p,
+        // Явно маппим поля сырого ответа в тип Proposal
+        const data: Proposal[] = rawData.map((p) => ({
           id: p.proposal_id,
           contractor_name: p.contractor_title,
+          contractor_inn: p.contractor_inn,
+          total_cost: p.total_cost,
+          is_winner: p.is_winner,
+          winner_rank: p.winner_rank,
+          additional_info: p.additional_info,
         }));
         setProposals(data);
       } catch (error) {

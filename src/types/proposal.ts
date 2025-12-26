@@ -1,7 +1,5 @@
 // frontend/src/types/proposal.ts
 
-import type { NullableString } from './tender';
-
 export interface ProposalMeta {
   id: number;
   contractor_name: string;
@@ -12,16 +10,16 @@ export interface ProposalMeta {
 }
 
 export interface ProposalSummary {
-  id: number;
-  proposal_id: number;
+  id?: number;
+  proposal_id?: number;
   summary_key: string;
-  job_title: string;
-  materials_cost: NullableString;
-  works_cost: NullableString;
-  indirect_costs_cost: NullableString;
-  total_cost: NullableString;
-  created_at: string;
-  updated_at: string;
+  job_title?: string;
+  materials_cost?: string;
+  works_cost?: string;
+  indirect_costs_cost?: string;
+  total_cost?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ProposalPosition {

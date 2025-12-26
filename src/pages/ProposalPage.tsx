@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { getProposalDetails } from '@/api/proposals';
 import { ArrowLeft, Building2, FileText, Award, AlertCircle } from 'lucide-react';
-import { formatNullableCurrency } from '@/utils/utils';
+import { formatCurrency } from '@/utils/utils';
 
 // Константы для итоговой суммы: ключ для backend и человеко-читаемая подпись
 const SUMMARY_KEYS = {
@@ -140,7 +140,7 @@ export const ProposalPage: React.FC = () => {
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Итого по смете:</p>
               <p className="text-3xl font-bold text-primary mt-1">
-                {totalWithVat ? formatNullableCurrency(totalWithVat.total_cost) : "—"}
+                {totalWithVat ? formatCurrency(totalWithVat.total_cost) : "—"}
               </p>
             </div>
           </div>
@@ -171,18 +171,18 @@ export const ProposalPage: React.FC = () => {
             <CardContent>
               <div className="space-y-3">
                 {data.summaries.map((summary, idx) => {
-                  const hasMaterials = summary.materials_cost?.Valid;
-                  const hasWorks = summary.works_cost?.Valid;
+                  const hasMaterials = summary.materials_cost != null && summary.materials_cost !== "";
+                  const hasWorks = summary.works_cost != null && summary.works_cost !== "";
                   const showDetails = hasMaterials || hasWorks;
                   
                   return (
-                    <div key={summary.id}>
+                    <div key={summary.summary_key + idx}>
                       <div className="flex justify-between items-baseline">
                         <span className="text-sm text-muted-foreground">
                           {summary.job_title || summary.summary_key}
                         </span>
                         <span className="text-sm font-semibold">
-                          {formatNullableCurrency(summary.total_cost)}
+                          {formatCurrency(summary.total_cost)}
                         </span>
                       </div>
                       {showDetails && (
@@ -190,13 +190,13 @@ export const ProposalPage: React.FC = () => {
                           {hasMaterials && (
                             <div className="flex justify-between">
                               <span>• Материалы:</span>
-                              <span>{formatNullableCurrency(summary.materials_cost)}</span>
+                              <span>{formatCurrency(summary.materials_cost)}</span>
                             </div>
                           )}
                           {hasWorks && (
                             <div className="flex justify-between">
                               <span>• Работы:</span>
-                              <span>{formatNullableCurrency(summary.works_cost)}</span>
+                              <span>{formatCurrency(summary.works_cost)}</span>
                             </div>
                           )}
                         </div>
