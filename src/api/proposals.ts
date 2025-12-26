@@ -13,8 +13,9 @@ async function handleApiError(response: Response, baseMessage: string): Promise<
     if (errorData?.message) {
       errorMessage += ` - ${errorData.message}`;
     }
-  } catch {
-    // If response body is not JSON, use statusText only
+  } catch (parseError) {
+    // If response body is not JSON, log parsing error and use statusText only
+    console.error("Failed to parse error response as JSON:", parseError);
   }
   throw new Error(errorMessage);
 }

@@ -24,9 +24,9 @@ export const formatCurrency = (value: string | number | null | undefined) => {
 /**
  * Форматирование числа как валюты без символа (для таблиц)
  */
-export const formatDecimal = (value: string | undefined | null) => {
-  if (!value) return "—";
-  const num = parseFloat(value);
+export const formatDecimal = (value: string | number | undefined | null) => {
+  if (value == null || value === "") return "—";
+  const num = typeof value === 'string' ? parseFloat(value) : value;
   if (isNaN(num)) return "—";
   
   if (num >= 1000) {

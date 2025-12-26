@@ -62,13 +62,15 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                 <TableCell className="px-2 py-3 align-top">
                   <div className="flex flex-col gap-1.5 min-w-0 w-full max-w-full">
                     
-                    {/* Используем обычный block (не flex) для текста, чтобы он обтекал бейдж */}
-                    <div className="text-xs leading-snug break-words whitespace-normal font-medium text-foreground">
-                      {item.title}
-                      
-                      {/* Бейдж теперь inline-элемент, он будет "прилипать" к концу текста */}
+                    <div className="flex flex-wrap items-baseline gap-1 text-xs leading-snug break-words whitespace-normal font-medium text-foreground">
+                      <span className="min-w-0 break-words">
+                        {item.title}
+                      </span>
                       {item.catalog_name && (
-                        <Badge variant="outline" className="ml-1.5 inline-flex align-middle text-[9px] px-1 py-0 h-4 font-normal text-muted-foreground border-border whitespace-nowrap translate-y-[-1px]">
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] px-1 py-0 h-4 font-normal text-muted-foreground border-border whitespace-nowrap"
+                        >
                           Каталог
                         </Badge>
                       )}
@@ -77,7 +79,7 @@ export const ProposalEstimateTable: React.FC<Props> = ({ positions, lotTitle }) 
                     <div className="sm:hidden text-[10px] text-muted-foreground flex gap-2">
                          <span>{item.quantity} {item.unit}</span>
                          <span className="opacity-50">|</span>
-                         <span>{formatDecimal(item.cost_total)} ₽</span>
+                         <span>{formatDecimal(item.cost_total)}</span>
                     </div>
 
                     {item.comment_contractor && (
