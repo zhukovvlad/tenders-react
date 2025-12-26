@@ -15,6 +15,7 @@ import Settings from "./pages/Settings.tsx";
 import TenderPage from "./pages/TenderListPage.tsx";
 import TenderTypeListPage from "./pages/tender-types/TenderTypeListPage.tsx";
 import { TenderDetailPage } from "./pages/TenderDetailPage.tsx";
+import { ProposalPage } from "./pages/ProposalPage.tsx";
 import DemoPage from "./components/tenderslist/page.tsx";
 import { TenderChaptersPage } from "./pages/tender-types/TenderChaptersPage.tsx";
 import { TenderCategoriesPage } from "./pages/tender-types/TenderCategoriesPage.tsx";
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "tenders/:id",
         element: <TenderDetailPage />,
+      },
+      {
+        path: "proposals/:id",
+        element: <ProposalPage />,
       },
       {
         path: "directories/tender-types",

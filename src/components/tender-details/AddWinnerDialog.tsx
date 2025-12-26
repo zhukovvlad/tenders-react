@@ -55,7 +55,13 @@ export function AddWinnerDialog({
           `${buildApiUrl(API_CONFIG.ENDPOINTS.LOTS, lotId)}/proposals`
         );
         if (!response.ok) throw new Error("Не удалось загрузить предложения");
-        const data: Proposal[] = await response.json();
+        const rawData: any[] = await response.json();
+        // Маппим proposal_id в id для совместимости с типом Proposal
+        const data: Proposal[] = rawData.map(p => ({
+          ...p,
+          id: p.proposal_id,
+          contractor_name: p.contractor_title,
+        }));
         setProposals(data);
       } catch (error) {
         toast.error("Ошибка при загрузке предложений");
@@ -136,22 +142,24 @@ export function AddWinnerDialog({
                   <SelectValue placeholder="Выберите участника" />
                 </SelectTrigger>
                 <SelectContent className="max-w-sm">
-                  {proposals.map((proposal) => {
-                    const displayText = `${proposal.contractor_name}${
-                      proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
-                    }`;
-                    return (
-                      <SelectItem
-                        key={proposal.id}
-                        value={proposal.id.toString()}
-                        title={displayText}
-                      >
-                        <div className="truncate max-w-[280px]">
-                          {displayText}
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
+                  {proposals
+                    .filter((proposal) => proposal.id !== undefined && proposal.id !== null)
+                    .map((proposal) => {
+                      const displayText = `${proposal.contractor_name}${
+                        proposal.contractor_inn ? ` (ИНН: ${proposal.contractor_inn})` : ""
+                      }`;
+                      return (
+                        <SelectItem
+                          key={proposal.id}
+                          value={proposal.id!.toString()}
+                          title={displayText}
+                        >
+                          <div className="truncate max-w-[280px]">
+                            {displayText}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                 </SelectContent>
               </Select>
             )}
